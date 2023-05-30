@@ -8,6 +8,9 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import model.Game;
+import model.Player;
+
 public class Window extends JFrame {
 	private static final long serialVersionUID = 1L;
 
@@ -18,23 +21,29 @@ public class Window extends JFrame {
 						LIGHT_COLOR2 = new Color(224, 251, 252),
 						RED = new Color(238, 108, 77);
 
+	private GameView gameView;
+	
 	private JPanel lastPanel;
-
-	private int width;
-	private int height;
+	private int width, height;
 	
 	public Window(int w, int h) {
 		this.setTitle("Worms");
 		this.width = w;
 		this.height = h;
-		this.setMinimumSize(new Dimension(width, height)); // width+75, height));
+		this.setMinimumSize(new Dimension(width+75, height+75)); // width+75, height));
 		this.setResizable(true);
 		this.setLocationRelativeTo(null);
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		// this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		setDefaultLookAndFeelDecorated(true);
+
+
+		Game game = new Game(Player.createPlayer("leopold"));
+		System.out.println(game);
+
+		setGameView(game);
 
 		this.addWindowListener(new WindowAdapter()
         {
@@ -50,7 +59,6 @@ public class Window extends JFrame {
 	
 	public void setHomeView() {
 		this.getContentPane().removeAll();
-		this.setResizable(true);
 		//this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		// lastPanel = new HomeView(this);
 		// this.getContentPane().add(lastPanel);
@@ -58,4 +66,14 @@ public class Window extends JFrame {
 		repaint();
 	}
 	
+	public void setGameView(Game game) {
+		this.getContentPane().removeAll();
+		// this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		gameView = new GameView(game);
+		lastPanel = gameView;
+		this.getContentPane().add(lastPanel);
+		revalidate();
+		repaint();
+	}
+
 }
