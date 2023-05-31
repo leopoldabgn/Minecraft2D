@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -22,6 +24,9 @@ public class Window extends JFrame {
 						RED = new Color(238, 108, 77);
 
 	private GameView gameView;
+	private Game game;
+
+	private GameKeyListener gameKeyListener;
 	
 	private JPanel lastPanel;
 	private int width, height;
@@ -45,11 +50,9 @@ public class Window extends JFrame {
 
 		setGameView(game);
 
-		this.addWindowListener(new WindowAdapter()
-        {
+		this.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e)
-            {
+            public void windowClosing(WindowEvent e) {
 				System.exit(0);
             }
         });
@@ -57,23 +60,36 @@ public class Window extends JFrame {
 		this.setVisible(true);
 	}
 	
-	public void setHomeView() {
+	public void clearWindow() {
 		this.getContentPane().removeAll();
-		//this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		// lastPanel = new HomeView(this);
-		// this.getContentPane().add(lastPanel);
+		if(gameKeyListener != null)
+			this.removeKeyListener(gameKeyListener);
+	}
+
+	public void refreshWindow() {
 		revalidate();
 		repaint();
 	}
+
+	public void setHomeView() {
+		clearWindow();
+		//this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		// lastPanel = new HomeView(this);
+		// this.getContentPane().add(lastPanel);
+		refreshWindow();
+	}
 	
 	public void setGameView(Game game) {
-		this.getContentPane().removeAll();
-		// this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		gameView = new GameView(game);
-		lastPanel = gameView;
+		clearWindow();
+		this.game = game;
+		this.gameView = new GameView(game);
+		this.lastPanel = gameView;
+		
+		gameKeyListener = new GameKeyListener(gameView, game);
+		this.addKeyListener(gameKeyListener);
+
 		this.getContentPane().add(lastPanel);
-		revalidate();
-		repaint();
+		refreshWindow();
 	}
 
 }

@@ -5,19 +5,16 @@ import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
 
 import gui.Window;
 
 public class App {
 
-    private static String RESOURCES_FOLDER = "src/main/java/resources/";
-
-    public static void main( String[] args ){
-        new Window(600, 600);
-    }
-
-    public static String getResourcesFolder() {
-        return RESOURCES_FOLDER;
+    public static void main( String[] args ) {
+        SwingUtilities.invokeLater(() -> {
+            new Window(600, 600);
+        });
     }
 
 	public static Image getImage(final String pathAndFileName) throws IOException {

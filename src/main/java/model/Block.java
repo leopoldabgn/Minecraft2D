@@ -11,7 +11,7 @@ public class Block {
 
     private Point position = new Point(-1, -1);
     private String texturePath;
-    private transient Image image;
+    private transient Image texture;
 
     private int DEFAULT_SIZE = 50;
     private int size;
@@ -32,9 +32,9 @@ public class Block {
     }
 
     public void draw(Graphics g) {
-        if(image == null)
+        if(texture == null)
             setTexture(texturePath); // Refresh Image Object
-        g.drawImage(image, (int)position.getX(), (int)position.getY(), size, size, null);
+        g.drawImage(texture, (int)position.getX(), (int)position.getY(), size, size, null);
     }
 
     public static class Grass extends Block {
@@ -51,6 +51,21 @@ public class Block {
             super(x, y, "blocks/brick.png");
         }
 
+    }
+
+    public boolean isOnMe(Player p) {
+        int x1 = p.getX(),
+            x2 = x1 + p.getSize(),
+            y1 = p.getY(),
+            y2 = p.getY() + p.getSize();
+
+        return ((x1 <= getX() && x2 >= getX()) || (x1 <= getX() + getSize() && x2 >= getX() + getSize())) &&
+        ((y1 <= getY() && y2 >= getY()) || (y1 <= getY() + getSize() && y2 >= getY() + getSize()));
+    }
+
+    public boolean isOnMe(int x2, int y2) {
+        return x2 >= getX() && x2 <= getX() + getSize() &&
+               y2 >= getY() && y2 <= getY() + getSize(); 
     }
 
     public int getSize() {
@@ -76,7 +91,7 @@ public class Block {
     public void setTexture(String path) {
         this.texturePath = path;
         try {
-            this.image = App.getImage(path);
+            this.texture = App.getImage(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -85,6 +100,10 @@ public class Block {
     @Override
     public String toString() {
         return "block -> type: "+getClass().getName()+", x: "+getX()+", y: "+getY();
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 
 }
