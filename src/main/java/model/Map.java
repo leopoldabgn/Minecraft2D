@@ -1,6 +1,7 @@
 package model;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.util.ArrayList;
 
 public class Map {
@@ -10,6 +11,8 @@ public class Map {
     private ArrayList<Block> blocks = new ArrayList<>();
     private int width  = 600,
                 height = 600;
+
+    private Point origin = new Point(0, 0);
 
     private Map(Game game) {
         this.game = game;
@@ -30,17 +33,34 @@ public class Map {
         return map;
     }
 
-    public void draw(Graphics g) {
+    public boolean isOnScreen(Entity e) {
+        int x1 = e.getX(),
+            x2 = x1 + e.getSize(),
+            y1 = e.getY(),
+            y2 = y1 + e.getSize();
+    
+        return isOnScreen(x1, y1) || isOnScreen(x2, y1) || isOnScreen(x1, y2) || isOnScreen(x2, y2);
+    }
+    
+    public boolean isOnScreen(int x, int y) {
+        int orx = (int)origin.getX(),
+            ory = (int)origin.getY();
 
+        return x >= orx && x <= orx + width && y >= ory && y <= ory + height;
+    }
+
+    public void draw(Graphics g) {
         // On commence par dessiner le terrain en arrière plan
         for(Block b : blocks) {
-            b.draw(g);
+            if(isOnScreen(b))
+                b.draw(g);
         }
 
         // On dessine les joueurs
         if(players != null) {
             for(Player p : players) {
-                p.draw(g);
+                if(isOnScreen(p))
+                    p.draw(g);
             }
         }
     }
@@ -110,8 +130,7 @@ public class Map {
         y1 = p.getY(),
         y2 = y1 + p.getSize();
 
-        return ((x1 < 0 && x2 >= 0) || (x1 <= width && x2 > width)) ||
-        ((y1 < 0 && y2 >= 0) || (y1 <= height && y2 > height));
+        return isOut(x1, y1) && isOut(x1, y2) && isOut(x2, y1) && isOut(x2, y2);
     }
 
     public boolean isOut(int x, int y) {
@@ -154,7 +173,7 @@ public class Map {
         p.setJumping(true);
         new Thread(() -> {
             p.setVelY(-1);
-            for(int i=0;i<Block.DEFAULT_SIZE * 1.5f;i++) {
+            for(int i=0;i<Entity.DEFAULT_BLOCK_SIZE * 1.5f;i++) {
                 try {
                     Thread.sleep(Player.DELAY_MOVE);
                 } catch (InterruptedException e) {
