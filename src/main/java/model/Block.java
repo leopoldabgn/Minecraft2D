@@ -13,7 +13,7 @@ public class Block {
     private String texturePath;
     private transient Image texture;
 
-    private int DEFAULT_SIZE = 50;
+    public static int DEFAULT_SIZE = 50;
     private int size;
 
     private Block(int x, int y, String texturePath) {

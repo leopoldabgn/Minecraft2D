@@ -13,7 +13,7 @@ import model.Player;
 
 public class GameView extends JPanel implements ActionListener {
     
-    private Timer timer = new Timer(5, this);
+    private Timer timer = new Timer(1, this);
 
     private Game game;
     private MapView mapView;
@@ -21,11 +21,8 @@ public class GameView extends JPanel implements ActionListener {
     public GameView(Game game) {
         this.game = game;
         this.mapView = new MapView(game.getMap());
-
         this.setBackground(Color.DARK_GRAY);
-        
         this.add(mapView);
-        
         timer.start();
     }
 
@@ -36,11 +33,21 @@ public class GameView extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent action) {
         Map map = game.getMap();
-        Player player = game.getMainPlayer();
-        
-        if(!player.isFalling() && !map.isOnGround(player)) {
+        Player p = game.getMainPlayer();
+
+        if(map.canMovePlayer(p, p.getVelX(), p.getVelY())) {
+            p.move();
+        }
+        else if(p.getVelX() != 0 && p.getVelY() != 0) {
+            if(map.canMovePlayer(p, 0, p.getVelY()))
+                p.move(true, false); // On interdit d'avancer sur x
+            else if(map.canMovePlayer(p, p.getVelX(), 0))
+                p.move(false, true);
+        }
+
+        if(!p.isJumping() && !p.isFalling() && !map.isOnGround(p)) {
             // Launch Thread
-            map.startFalling(player);
+            map.startFalling(p);
         }
 
         mapView.repaint();

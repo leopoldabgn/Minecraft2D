@@ -2,8 +2,6 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -27,6 +25,7 @@ public class Window extends JFrame {
 	private Game game;
 
 	private GameKeyListener gameKeyListener;
+	private GameMouseListener gameMouseListener;
 	
 	private JPanel lastPanel;
 	private int width, height;
@@ -64,6 +63,8 @@ public class Window extends JFrame {
 		this.getContentPane().removeAll();
 		if(gameKeyListener != null)
 			this.removeKeyListener(gameKeyListener);
+		if(gameMouseListener != null)
+			this.removeMouseListener(gameMouseListener);
 	}
 
 	public void refreshWindow() {
@@ -86,7 +87,9 @@ public class Window extends JFrame {
 		this.lastPanel = gameView;
 		
 		gameKeyListener = new GameKeyListener(gameView, game);
+		gameMouseListener = new GameMouseListener(gameView, game);
 		this.addKeyListener(gameKeyListener);
+		this.addMouseListener(gameMouseListener);
 
 		this.getContentPane().add(lastPanel);
 		refreshWindow();

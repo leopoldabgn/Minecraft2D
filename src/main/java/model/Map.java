@@ -3,8 +3,6 @@ package model;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import model.Block.Grass;
-
 public class Map {
     
     private Game game;
@@ -28,7 +26,7 @@ public class Map {
         for(int j=0;j<11;j++) {
             iblock = map.pushRight(iblock, BlockType.GRASS);
         }
-
+        
         return map;
     }
 
@@ -110,17 +108,17 @@ public class Map {
         int x1 = p.getX(),
         x2 = x1 + p.getSize(),
         y1 = p.getY(),
-        y2 = p.getY() + p.getSize();
+        y2 = y1 + p.getSize();
 
-        return ((x1 <= 0 && x2 >= 0) || (x1 <= width && x2 >= width)) ||
-        ((y1 <= 0 && y2 >= 0) || (y1 <= height && y2 >= height));
+        return ((x1 < 0 && x2 >= 0) || (x1 <= width && x2 > width)) ||
+        ((y1 < 0 && y2 >= 0) || (y1 <= height && y2 > height));
     }
 
     public boolean isOut(int x, int y) {
         return !(x >= 0 && x <= width && y >= 0 && y <= height);
     }
 
-    public boolean movePlayer(Player player, int addX, int addY) {
+    public boolean canMovePlayer(Player player, int addX, int addY) {
         int x = player.getX() + addX;
         int y = player.getY() + addY;
         // On crée un clone de joueur pour tester si on peut bouger le joueur
@@ -134,8 +132,6 @@ public class Map {
             System.err.println("x:"+x+" , y:"+y+" is on a block ! Cannot move player.");
             return false;
         }
-        // On change les coordonnées du vrai joueur
-        player.addToPosition(addX, addY);
         return true;
     }
 
@@ -144,15 +140,29 @@ public class Map {
             return;
         p.setFalling(true);
         new Thread(() -> {
-            while(!isOnGround(p)) { // timeout ?
-                p.addToPosition(0, 1);
+            p.setVelY(1);
+            while(!isOnGround(p))
+                ;
+            p.setVelY(0);
+            p.setFalling(false);
+        }).start();
+    }
+
+    public void startJumping(Player p) {
+        if(p.isJumping())
+            return;
+        p.setJumping(true);
+        new Thread(() -> {
+            p.setVelY(-1);
+            for(int i=0;i<Block.DEFAULT_SIZE * 1.5f;i++) {
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(Player.DELAY_MOVE);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
+            p.setVelY(0);
+            p.setJumping(false);
         }).start();
     }
 
