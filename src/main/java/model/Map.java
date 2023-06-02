@@ -23,60 +23,25 @@ public class Map {
         this.players = game.getPlayers();
     }
 
-    // public static Map create(Game game, int width, int height) {
-    //     Map map = new Map(game, width, height);
-    //     Block startBlock = map.pushBlock(BlockType.GRASS, 0, 0);
-    //     startBlock.setPosition(0,
-    //                            map.height - startBlock.getSize());
+    public static Map create(Game game, int width, int height) {
+        Map map = new Map(game, width, height);
+        Block startBlock = map.pushBlock(BlockType.GRASS, 0, 0);
+        startBlock.setPosition(0,
+                               map.height - startBlock.getSize());
 
-    //     Block iblock = startBlock;
-    //     Block jBlock = startBlock;
-    //     for(int j=0;j<10;j++) {
-    //         for(int i=0;i<100;i++) {
-    //             iblock = map.pushRight(iblock, j == 0 ? BlockType.GRASS : BlockType.STONE);
-    //         }
-    //         jBlock = map.pushDown(jBlock, BlockType.STONE);
-    //         iblock = jBlock;
-    //     }
-        
-    //     return map;
-    // }
-        private static final int MAP_WIDTH = 100;
-        private static final int MAP_HEIGHT = 10;
-        private static final int NUM_LAYERS = 10;
-        private static final double GRASS_PROBABILITY = 0.5;
-    
-        public static Map create(Game game, int width, int height) {
-            Map map = new Map(game, width, height);
-            Block startBlock = map.pushBlock(BlockType.GRASS, 0, 0);
-            startBlock.setPosition(0, map.height - startBlock.getSize());
-    
-            Random random = new Random();
-
-            Block currentBlock = startBlock;
-            Block currentBlock2 = startBlock;
-
-            long maxMemory = Runtime.getRuntime().maxMemory();
-
-            // Conversion en méga-octets (Mo)
-            long maxMemoryInMegabytes = maxMemory / (1024 * 1024);
-    
-            System.out.println("Mémoire maximale autorisée : " + maxMemoryInMegabytes + " Mo");
-       
-
-            for (int layer = 0; layer < 20; layer++) {
-                for (int j = 0; j < MAP_HEIGHT; j++) {
-                    for (int i = 0; i < MAP_WIDTH; i++) {
-                        BlockType blockType = random.nextDouble() < GRASS_PROBABILITY ? BlockType.GRASS : BlockType.STONE;
-                        currentBlock = map.pushRight(currentBlock, blockType);
-                    }
-                    currentBlock2 = map.pushDown(currentBlock2, BlockType.STONE);
-                    currentBlock = currentBlock2;
-                }
+        Block iblock = startBlock;
+        Block jBlock = startBlock;
+        Random rd = new Random();
+        for(int j=0;j<10;j++) {
+            for(int i=0;i<100;i++) {
+                iblock = map.pushRight(iblock, rd.nextDouble() > 0.5 ? BlockType.STONE : BlockType.GRASS);
             }
-        
-            return map;
+            jBlock = map.pushDown(jBlock, rd.nextDouble() > 0.5 ? BlockType.STONE : BlockType.GRASS);
+            iblock = jBlock;
         }
+        
+        return map;
+    }
     
     public boolean isOnScreen(Entity e) {
         int x1 = e.getRealX(),
