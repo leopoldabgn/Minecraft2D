@@ -1,41 +1,34 @@
 package model;
 
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
 
 public class Block extends Entity {
 
-    private Block(int x, int y, String texturePath) {
-        super(texturePath, 1, new Point(x, y));
+    private BlockType blockType;
+
+    private Block(BlockType type, int x, int y) {
+        super(type.getTexture(), 1, new Point(x, y));
     }
 
     public static Block create(BlockType type) {
-        switch(type) {
-            case BRICK:
-                return new Brick(0, 0);
-            default:
-                return new Grass(0, 0);
-        }
+        return new Block(type, 0, 0);
     }
 
-    public static class Grass extends Block {
+    @Override
+    public void draw(Graphics g, Point origin) {
+        int x = (int)(getRealX() - origin.getX());
+        int y = (int)(getRealY() - origin.getY());
 
-        public Grass(int x, int y) {
-            super(x, y, "blocks/grass.png");
-        }
-
-    }
-
-    public static class Brick extends Block {
-
-        public Brick(int x, int y) {
-            super(x, y, "blocks/brick.png");
-        }
-
+        // Get Image object for texture
+        Image img = Textures.loadBlockTexture(texture);
+        g.drawImage(img, x, y, getSize(), getSize(), null);
     }
 
     @Override
     public String toString() {
-        return "block -> type: "+getClass().getName()+", x: "+getX()+", y: "+getY();
+        return "block -> type: "+getClass().getName()+", x: "+getRealX()+", y: "+getRealY();
     }
 
 }

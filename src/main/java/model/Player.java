@@ -1,9 +1,12 @@
 package model;
 
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
 
 public class Player extends Entity {
     
+    private PlayerType type = PlayerType.STEVE;
     private String pseudo;
     private int score;
     private Point velocity = new Point(0, 0); // rapidite
@@ -15,33 +18,43 @@ public class Player extends Entity {
 
     private Player() {}
 
-    private Player(String pseudo, String texturePath) {
-        super(texturePath, 1, new Point(0, 0));
+    private Player(PlayerType type, String pseudo, Point position) {
+        super(type.getTexture(), 1, position);
         this.pseudo = pseudo;
     }
 
-    public static Player createPlayer(String pseudo) {
-        return new Steve(pseudo);
+    public static Player createPlayer(PlayerType type, String pseudo) {
+        return new Player(type, pseudo, new Point(0, 0));
     }
 
-    public static class Steve extends Player{
-
-        public Steve(String pseudo) {
-            super(pseudo, "players/steve_right.png");
-        }
-
+    public static Player createPlayer(PlayerType type, String pseudo, Point position) {
+        return new Player(type, pseudo, position);
     }
 
-    public void move() {
-        move(false, false);
+    // origin represente la coordonnée en haut a gauche de l'écran
+    // On calcule les coordonnées de l'objet sur l'écran en partant de ce point
+    @Override
+    public void draw(Graphics g, Point origin) {
+        int x = (int)(getRealX() - origin.getX());
+        int y = (int)(getRealY() - origin.getY());
+
+        // Get Image object for texture
+        Image img = Textures.loadPlayerTexture(texture);
+        g.drawImage(img, x, y, getSize(), getSize(), null);
     }
 
-    public void move(boolean restrictX, boolean restrictY) {
+    public boolean move() {
+        return move(false, false);
+    }
+
+    public boolean move(boolean restrictX, boolean restrictY) {
         if(System.currentTimeMillis() - lastTimeMove >= Player.DELAY_MOVE) {
             addToPosition(restrictX ? 0 : getVelX(),
                           restrictY ? 0 : getVelY());
             lastTimeMove = System.currentTimeMillis();
+            return true;
         }
+        return false;
     }
 
     public void setVelocity(Point vel) {

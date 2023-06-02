@@ -1,0 +1,7 @@
+Pour récupérer les images des textures de minecraft, vous pouvez retrouver les images dans le dossier ".minecraft" (si vous avez installez minecraft)
+Sinon, il suffit d'aller sur ce site:
+https://minecraft.fandom.com/wiki/List_of_block_textures
+
+Puis, une fois l'image telecharger en .webp, vous pouvez la convertir de cette facon (avec imagemagick):
+convert texture.webp texture.png
+

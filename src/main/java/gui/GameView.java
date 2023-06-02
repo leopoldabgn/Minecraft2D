@@ -34,15 +34,25 @@ public class GameView extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent action) {
         Map map = game.getMap();
         Player p = game.getMainPlayer();
+        boolean movedPlayer = false;
 
         if(map.canMovePlayer(p, p.getVelX(), p.getVelY())) {
-            p.move();
+            movedPlayer = p.move();
         }
         else if(p.getVelX() != 0 && p.getVelY() != 0) {
             if(map.canMovePlayer(p, 0, p.getVelY()))
-                p.move(true, false); // On interdit d'avancer sur x
+                movedPlayer = p.move(true, false); // On interdit d'avancer sur x
             else if(map.canMovePlayer(p, p.getVelX(), 0))
-                p.move(false, true);
+                movedPlayer = p.move(false, true);
+        }
+
+        // Si le joueur a bougé, on deplace la carte avec lui pour le garder au center
+        if(movedPlayer) {
+            int midPlayerX = (map.getWidth() / 2)  - (p.getSize() / 2);
+            int midPlayerY = (map.getHeight() / 2) - (p.getSize() / 2);
+            int mapX = p.getRealX() - midPlayerX;
+            int mapY = p.getRealY() - midPlayerY;
+            map.moveOrigin(mapX, mapY);
         }
 
         if(!p.isJumping() && !p.isFalling() && !map.isOnGround(p)) {

@@ -23,7 +23,6 @@ public class GameKeyListener extends KeyAdapter {
     public void keyPressed(KeyEvent e) {
         if(gameView == null || game == null)
             return;
-        MapView mapView = gameView.getMapView();
         Map map = game.getMap();
         Player p = game.getMainPlayer();
 
@@ -45,6 +44,7 @@ public class GameKeyListener extends KeyAdapter {
                 p.setVelX(-1);
                 break;
         }
+
     }
         
 
@@ -52,8 +52,6 @@ public class GameKeyListener extends KeyAdapter {
     public void keyReleased(KeyEvent e) {
         if(gameView == null || game == null)
             return;
-        MapView mapView = gameView.getMapView();
-        Map map = game.getMap();
         Player p = game.getMainPlayer();
 
         switch(e.getKeyCode()) {

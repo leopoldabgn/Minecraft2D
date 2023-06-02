@@ -1,3 +1,6 @@
 # Backlog
 
-- [ ] Faire avancer la map toute seul. Quand on est sur le bord gauche/droite/haut/bas, on fait avancer la map en meme temps que le joueur vers la gauche/droite/haut/bas. Par exemple, on peut declencher cette option lorsque le joueur est à 100px du bord ou 200px.
+- [ ] Générer des blocs de minerais aléatoirement (fer, diamant, etc..)
+- [ ] Permettre plusieurs images pour le joueur. Une pour chaque action (sauter, droite, gauche...)
+- [ ] Mettre uniquement des images de 16x16 pour les textures
+- [ ] Faire une barre avec outils pioche etc..

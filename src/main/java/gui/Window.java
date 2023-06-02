@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -10,6 +12,7 @@ import javax.swing.JPanel;
 
 import model.Game;
 import model.Player;
+import model.PlayerType;
 
 public class Window extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -28,13 +31,15 @@ public class Window extends JFrame {
 	private GameMouseListener gameMouseListener;
 	
 	private JPanel lastPanel;
-	private int width, height;
+	private int width, height, heightSpace = 45;
 	
+	boolean isFullscreen = false;
+
 	public Window(int w, int h) {
 		this.setTitle("Worms");
 		this.width = w;
 		this.height = h;
-		this.setMinimumSize(new Dimension(width+75, height+75)); // width+75, height));
+		this.setMinimumSize(new Dimension(width, height+heightSpace)); // width+75, height));
 		this.setResizable(true);
 		this.setLocationRelativeTo(null);
 		// this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -44,12 +49,69 @@ public class Window extends JFrame {
 		setDefaultLookAndFeelDecorated(true);
 
 
-		Game game = new Game(Player.createPlayer("leopold"));
-		System.out.println(game);
+		Game game = new Game(Player.createPlayer(PlayerType.STEVE, "leopold"), width, height);
+		// System.out.println(game);
 
 		setGameView(game);
 
+		this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                // System.out.println("La taille de la fenêtre a été modifiée !");
+				// heightSpace enleve l'espace ajouté au debut du constructeur de Window
+				Dimension newSize = new Dimension(getWidth(), getHeight() - heightSpace);
+		
+                System.out.println("Nouvelle taille : " + newSize.getWidth() + "x" + newSize.getHeight());
+				if(gameView != null) {
+					gameView.getMapView().setPreferredSize(newSize);
+				}
+				gameView.updateUI();
+				// gameView.revalidate();
+				// gameView.repaint();
+            }
+        });
+
+
+		// Permet de vérifier si le joueur a mis le jeu en pleine écran
+
+        // GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        // isFullscreen = device.getFullScreenWindow() == this;
+
+		// this.addWindowStateListener(new WindowStateListener() {
+        //     @Override
+        //     public void windowStateChanged(WindowEvent e) {
+        //         boolean wasFullscreen = isFullscreen;
+        //         isFullscreen = (e.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH;
+        //         if (wasFullscreen && !isFullscreen) {
+        //             // System.out.println("La fenêtre a quitté le mode plein écran.");
+        //         } else if (!wasFullscreen && isFullscreen) {
+        //             // System.out.println("La fenêtre est maintenant en plein écran !");
+        //         }
+        //     }
+        // });
+
 		this.addWindowListener(new WindowAdapter() {
+
+			// Permet de mettre le jeu en full screen (sans la barre d'état etc...)
+
+			// @Override
+            // public void windowOpened(WindowEvent e) {
+            //     GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            //     device.setFullScreenWindow(Window.this);
+            //     if (device.isFullScreenSupported()) {
+            //         System.out.println("La fenêtre est maintenant en plein écran !");
+            //     } else {
+            //         System.out.println("Le mode plein écran n'est pas pris en charge.");
+            //     }
+            // }
+
+            // @Override
+            // public void windowClosed(WindowEvent e) {
+            //     GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            //     device.setFullScreenWindow(null);
+            //     System.out.println("La fenêtre a quitté le mode plein écran.");
+            // }
+
             @Override
             public void windowClosing(WindowEvent e) {
 				System.exit(0);

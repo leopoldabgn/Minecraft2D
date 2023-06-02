@@ -1,13 +1,11 @@
 package model;
 
-public enum BlockType {
-    GRASS("grass"),
-    STONE("stone"),
-    BRICK("brick");
+public enum PlayerType {
+    STEVE("steve");
 
     private String texture;
 
-    private BlockType(String texture) {
+    private PlayerType(String texture) {
         this.texture = texture;
     }
 

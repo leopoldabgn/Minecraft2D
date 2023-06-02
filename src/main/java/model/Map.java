@@ -1,8 +1,10 @@
 package model;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Map {
     
@@ -14,29 +16,72 @@ public class Map {
 
     private Point origin = new Point(0, 0);
 
-    private Map(Game game) {
+    private Map(Game game, int width, int height) {
         this.game = game;
+        this.width = width;
+        this.height = height;
         this.players = game.getPlayers();
     }
 
-    public static Map create(Game game) {
-        Map map = new Map(game);
-        Block startBlock = map.pushBlock(BlockType.GRASS, 0, 0);
-        startBlock.setPosition(0,
-                               map.height - startBlock.getSize());
+    // public static Map create(Game game, int width, int height) {
+    //     Map map = new Map(game, width, height);
+    //     Block startBlock = map.pushBlock(BlockType.GRASS, 0, 0);
+    //     startBlock.setPosition(0,
+    //                            map.height - startBlock.getSize());
 
-        Block iblock = startBlock;
-        for(int j=0;j<11;j++) {
-            iblock = map.pushRight(iblock, BlockType.GRASS);
-        }
+    //     Block iblock = startBlock;
+    //     Block jBlock = startBlock;
+    //     for(int j=0;j<10;j++) {
+    //         for(int i=0;i<100;i++) {
+    //             iblock = map.pushRight(iblock, j == 0 ? BlockType.GRASS : BlockType.STONE);
+    //         }
+    //         jBlock = map.pushDown(jBlock, BlockType.STONE);
+    //         iblock = jBlock;
+    //     }
         
-        return map;
-    }
+    //     return map;
+    // }
+        private static final int MAP_WIDTH = 100;
+        private static final int MAP_HEIGHT = 10;
+        private static final int NUM_LAYERS = 10;
+        private static final double GRASS_PROBABILITY = 0.5;
+    
+        public static Map create(Game game, int width, int height) {
+            Map map = new Map(game, width, height);
+            Block startBlock = map.pushBlock(BlockType.GRASS, 0, 0);
+            startBlock.setPosition(0, map.height - startBlock.getSize());
+    
+            Random random = new Random();
 
+            Block currentBlock = startBlock;
+            Block currentBlock2 = startBlock;
+
+            long maxMemory = Runtime.getRuntime().maxMemory();
+
+            // Conversion en méga-octets (Mo)
+            long maxMemoryInMegabytes = maxMemory / (1024 * 1024);
+    
+            System.out.println("Mémoire maximale autorisée : " + maxMemoryInMegabytes + " Mo");
+       
+
+            for (int layer = 0; layer < 20; layer++) {
+                for (int j = 0; j < MAP_HEIGHT; j++) {
+                    for (int i = 0; i < MAP_WIDTH; i++) {
+                        BlockType blockType = random.nextDouble() < GRASS_PROBABILITY ? BlockType.GRASS : BlockType.STONE;
+                        currentBlock = map.pushRight(currentBlock, blockType);
+                    }
+                    currentBlock2 = map.pushDown(currentBlock2, BlockType.STONE);
+                    currentBlock = currentBlock2;
+                }
+            }
+        
+            return map;
+        }
+    
     public boolean isOnScreen(Entity e) {
-        int x1 = e.getX(),
+        int x1 = e.getRealX(),
             x2 = x1 + e.getSize(),
-            y1 = e.getY(),
+            y1 = e.getRealY(),
             y2 = y1 + e.getSize();
     
         return isOnScreen(x1, y1) || isOnScreen(x2, y1) || isOnScreen(x1, y2) || isOnScreen(x2, y2);
@@ -53,23 +98,19 @@ public class Map {
         // On commence par dessiner le terrain en arrière plan
         for(Block b : blocks) {
             if(isOnScreen(b))
-                b.draw(g);
+                b.draw(g, origin);
         }
 
         // On dessine les joueurs
         if(players != null) {
             for(Player p : players) {
                 if(isOnScreen(p))
-                    p.draw(g);
+                    p.draw(g, origin);
             }
         }
     }
 
     public Block pushBlock(BlockType type, int x, int y) {
-        if(isOut(x, y)) {
-            System.err.println("x:"+x+" , y:"+y+" is out of map !");
-            return null;
-        }
         Block block = Block.create(type);
         block.setPosition(x, y);
         blocks.add(block);
@@ -77,8 +118,8 @@ public class Map {
     }
 
     public Block pushFromBlock(BlockType type, Block startBlock, int addx, int addy) {
-        int x = startBlock.getX() + addx;
-        int y = startBlock.getY() + addy;
+        int x = startBlock.getRealX() + addx;
+        int y = startBlock.getRealY() + addy;
         return pushBlock(type, x, y);
     }
 
@@ -125,16 +166,18 @@ public class Map {
     }
 
     public boolean isOut(Player p) {
-        int x1 = p.getX(),
+        int x1 = p.getRealX(),
         x2 = x1 + p.getSize(),
-        y1 = p.getY(),
+        y1 = p.getRealY(),
         y2 = y1 + p.getSize();
 
         return isOut(x1, y1) && isOut(x1, y2) && isOut(x2, y1) && isOut(x2, y2);
     }
 
     public boolean isOut(int x, int y) {
-        return !(x >= 0 && x <= width && y >= 0 && y <= height);
+        int orx = (int)origin.getX(),
+            ory = (int)origin.getY();
+        return !(x >= orx && x <= orx + width && y >= ory && y <= ory + height);
     }
 
     public boolean canMovePlayer(Player player, int addX, int addY) {
@@ -191,6 +234,15 @@ public class Map {
 
     public int getHeight() {
         return height;
+    }
+
+    public void setSize(Dimension dim) {
+        this.width  = (int)dim.getWidth();
+        this.height = (int)dim.getHeight();
+    }
+
+    public void moveOrigin(int addX, int addY) {
+        this.origin.setLocation(addX, addY);
     }
 
     @Override

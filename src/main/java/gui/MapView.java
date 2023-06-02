@@ -19,6 +19,12 @@ public class MapView extends JPanel {
     }
 
     @Override
+    public void setPreferredSize(Dimension prefSize) {
+        super.setPreferredSize(prefSize);
+        map.setSize(prefSize);
+    }
+
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponents(g);
         // On dessine l'arrière plan

@@ -8,15 +8,15 @@ public class Game {
     private Player mainPlayer;
     private Map map;
 
-    public Game(Player player) {
+    public Game(Player player, int mapWidth, int mapHeight) {
         this.mainPlayer = player;
         players.add(player);
-        this.map = Map.create(this);
+        this.map = Map.create(this, mapWidth, mapHeight);
     }
 
-    public Game(ArrayList<Player> players) {
+    public Game(ArrayList<Player> players, int mapWidth, int mapHeight) {
         this.mainPlayer = players.get(0);
-        this.map = Map.create(this);
+        this.map = Map.create(this, mapWidth, mapHeight);
         // Par défaut les joueurs sont tous en (0, 0)
     }
 
