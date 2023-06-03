@@ -24,7 +24,7 @@ public class Player extends Entity {
     }
 
     public static Player createPlayer(PlayerType type, String pseudo) {
-        return new Player(type, pseudo, new Point(0, 0));
+        return new Player(type, pseudo, new Point(0, -1));
     }
 
     public static Player createPlayer(PlayerType type, String pseudo, Point position) {

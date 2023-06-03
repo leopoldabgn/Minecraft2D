@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Map {
     
@@ -16,8 +15,8 @@ public class Map {
 
     private Point origin = new Point(0, 0);
 
-    private int[] BOUND_MAP_X = new int[] {-1000, 1000}, // 2000 blocs de large
-                  BOUND_MAP_Y = new int[] {-100, 100};
+    private static int[] BOUND_MAP_X = new int[] {-1000, 1000}, // 2000 blocs de large
+                         BOUND_MAP_Y = new int[] {-320, 100};
 
     private Map(Game game, int width, int height) {
         this.game = game;
@@ -28,14 +27,6 @@ public class Map {
 
     public static Map empty(Game game, int width, int height) {
         return new Map(game, width, height);
-    }
-    
-    public static Map create(Game game, int width, int height) {
-        Map map = new Map(game, width, height);
-
-        // TODO
-
-        return MapGenerator.allBlocksMap(game, width, height);
     }
 
     public boolean isOnScreen(Entity e) {
@@ -68,6 +59,40 @@ public class Map {
                     p.draw(g, origin);
             }
         }
+    }
+
+    public void pushLayer(Map map, BlockType bType, int y) {
+        for(int i=BOUND_MAP_X[0];i<=BOUND_MAP_X[1];i++) {
+            map.pushBlock(bType, i, y);
+        }
+    }
+
+    // On a les blocks et leur probabilité d'apparition
+    // Chaque element de proba est >= 0 et <= 1
+    // L'addition de toutes les probas doivent faire 1
+    public void pushLayer(Map map, BlockType[] blocks, double[] proba, int y) {
+
+        for(int i=BOUND_MAP_X[0];i<=BOUND_MAP_X[1];i++) {
+            map.pushBlock(getRandomBlockType(blocks, proba), i, y);
+        }
+
+    }
+
+    public BlockType getRandomBlockType(BlockType[] blocks, double[] proba) {
+        double randomNumber = Math.random();
+        double cumulativeProbability = 0.0;
+    
+        for (int i = 0; i < proba.length; i++) {
+            cumulativeProbability += proba[i];
+    
+            if (randomNumber <= cumulativeProbability) {
+                return blocks[i];
+            }
+        }
+    
+        // Au cas où la somme des probabilités n'atteint pas 1,
+        // renvoyer le dernier bloc du tableau
+        return blocks[blocks.length - 1];
     }
 
     public Block pushBlockRealPos(BlockType type, int realx, int realy) {

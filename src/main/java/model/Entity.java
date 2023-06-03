@@ -6,7 +6,7 @@ import java.awt.Point;
 
 public abstract class Entity {
     
-    protected Point position = new Point(0, 0);
+    protected Point position;
     protected String texture;
     // private transient Image texture;
 
@@ -18,6 +18,7 @@ public abstract class Entity {
     public Entity(String texture, int coeffSize, Point position) {
         this.texture = texture;
         this.coeffSize = coeffSize;
+        this.position = new Point(position);
     }
 
     // origin represente la coordonnée en haut a gauche de l'écran
