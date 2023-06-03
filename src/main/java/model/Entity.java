@@ -49,32 +49,44 @@ public abstract class Entity {
         return (int)(coeffSize * DEFAULT_BLOCK_SIZE);
     }
 
-    public int getX() {
-        return (int)(position.getX() / DEFAULT_BLOCK_SIZE);
-    }
-
     public int getRealX() {
         return (int)position.getX();
-    }
-
-    public int getY() {
-        return (int)(position.getY() / DEFAULT_BLOCK_SIZE);
     }
 
     public int getRealY() {
         return (int)position.getY();
     }
 
-    public Point getPosition() {
+    public Point getRealPosition() {
         return position;
     }
 
+    public void addToRealPosition(int addX, int addY) {
+        this.setRealPosition(getRealX() + addX, getRealY() + addY);
+    }
+
+    public void setRealPosition(int x, int y) {
+        this.position = new Point(x, y);
+    }
+
+    public int getX() {
+        return (int)(position.getX() / DEFAULT_BLOCK_SIZE);
+    }
+
+    public int getY() {
+        return (int)(position.getY() / DEFAULT_BLOCK_SIZE);
+    }
+
+    public Point getPosition() {
+        return new Point(getX(), getY());
+    }
+
     public void addToPosition(int addX, int addY) {
-        this.setPosition(getRealX() + addX, getRealY() + addY);
+        this.setPosition(getX() + addX * DEFAULT_BLOCK_SIZE, getY() + addY * DEFAULT_BLOCK_SIZE);
     }
 
     public void setPosition(int x, int y) {
-        this.position = new Point(x, y);
+        this.position = new Point(x * DEFAULT_BLOCK_SIZE, y * DEFAULT_BLOCK_SIZE);
     }
 
     public void setCoeffSize(double coeffSize) {

@@ -16,6 +16,9 @@ public class Map {
 
     private Point origin = new Point(0, 0);
 
+    private int[] BOUND_MAP_X = new int[] {-1000, 1000}, // 2000 blocs de large
+                  BOUND_MAP_Y = new int[] {-100, 100};
+
     private Map(Game game, int width, int height) {
         this.game = game;
         this.width = width;
@@ -23,26 +26,18 @@ public class Map {
         this.players = game.getPlayers();
     }
 
-    public static Map create(Game game, int width, int height) {
-        Map map = new Map(game, width, height);
-        Block startBlock = map.pushBlock(BlockType.GRASS, 0, 0);
-        startBlock.setPosition(0,
-                               map.height - startBlock.getSize());
-
-        Block iblock = startBlock;
-        Block jBlock = startBlock;
-        Random rd = new Random();
-        for(int j=0;j<10;j++) {
-            for(int i=0;i<100;i++) {
-                iblock = map.pushRight(iblock, rd.nextDouble() > 0.5 ? BlockType.STONE : BlockType.GRASS);
-            }
-            jBlock = map.pushDown(jBlock, rd.nextDouble() > 0.5 ? BlockType.STONE : BlockType.GRASS);
-            iblock = jBlock;
-        }
-        
-        return map;
+    public static Map empty(Game game, int width, int height) {
+        return new Map(game, width, height);
     }
     
+    public static Map create(Game game, int width, int height) {
+        Map map = new Map(game, width, height);
+
+        // TODO
+
+        return MapGenerator.allBlocksMap(game, width, height);
+    }
+
     public boolean isOnScreen(Entity e) {
         int x1 = e.getRealX(),
             x2 = x1 + e.getSize(),
@@ -73,6 +68,13 @@ public class Map {
                     p.draw(g, origin);
             }
         }
+    }
+
+    public Block pushBlockRealPos(BlockType type, int realx, int realy) {
+        Block block = Block.create(type);
+        block.setRealPosition(realx, realy);
+        blocks.add(block);
+        return block;
     }
 
     public Block pushBlock(BlockType type, int x, int y) {
@@ -106,7 +108,7 @@ public class Map {
 
     public boolean isOnGround(Player p) {
         Player p2 = p.weakClone();
-        p2.addToPosition(0, 1); // On descend de 1px
+        p2.addToRealPosition(0, 1); // On descend de 1px
         // Si le pixel d'en dessous correspond à un block
         // Alors on est bien sur le sol
         if(isOnBlock(p2))
@@ -150,7 +152,7 @@ public class Map {
         int y = player.getY() + addY;
         // On crée un clone de joueur pour tester si on peut bouger le joueur
         Player p2 = player.weakClone();
-        p2.addToPosition(addX, addY);
+        p2.addToRealPosition(addX, addY);
         if(isOut(p2)) {
             System.err.println("Player at x:"+x+" , y:"+y+" is out of map ! Cannot move player.");
             return false;

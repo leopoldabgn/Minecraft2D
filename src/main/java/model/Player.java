@@ -49,7 +49,7 @@ public class Player extends Entity {
 
     public boolean move(boolean restrictX, boolean restrictY) {
         if(System.currentTimeMillis() - lastTimeMove >= Player.DELAY_MOVE) {
-            addToPosition(restrictX ? 0 : getVelX(),
+            addToRealPosition(restrictX ? 0 : getVelX(),
                           restrictY ? 0 : getVelY());
             lastTimeMove = System.currentTimeMillis();
             return true;

@@ -6,10 +6,11 @@ import java.awt.Point;
 
 public class Block extends Entity {
 
-    private BlockType blockType;
+    private BlockType type;
 
     private Block(BlockType type, int x, int y) {
         super(type.getTexture(), 1, new Point(x, y));
+        this.type = type;
     }
 
     public static Block create(BlockType type) {
@@ -24,6 +25,10 @@ public class Block extends Entity {
         // Get Image object for texture
         Image img = Textures.loadBlockTexture(texture);
         g.drawImage(img, x, y, getSize(), getSize(), null);
+    }
+
+    public BlockType getType() {
+        return type;
     }
 
     @Override
