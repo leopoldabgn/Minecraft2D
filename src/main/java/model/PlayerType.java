@@ -3,14 +3,14 @@ package model;
 public enum PlayerType {
     STEVE("steve");
 
-    private String texture;
+    private String type;
 
-    private PlayerType(String texture) {
-        this.texture = texture;
+    private PlayerType(String type) {
+        this.type = type;
     }
 
-    public String getTexture() {
-        return texture;
+    public String getType() {
+        return type;
     }
 
 }

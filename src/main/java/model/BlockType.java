@@ -1,6 +1,7 @@
 package model;
 
 public enum BlockType {
+    BEDROCK("bedrock"),
     BRICK("brick"),
     CHEST("chest"),
     COAL_ORE("coal_ore"),

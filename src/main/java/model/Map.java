@@ -4,9 +4,13 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Map {
     
+    private Lock mutex = new ReentrantLock();
+
     private Game game;
     private ArrayList<Player> players;
     private ArrayList<Block> blocks = new ArrayList<>();
@@ -95,6 +99,25 @@ public class Map {
         return blocks[blocks.length - 1];
     }
 
+    // On peut utiliser cette fonction pour retirer un block de la map
+    // Le block peut ensuite etre stocké dans l'inventaire du joueur
+    // par exemple
+    public Block removeBlock(int x, int y) {
+        for(Block b : blocks) {
+            if(b.getX() == x && b.getY() == y) {
+                blocks.remove(b);
+                return b;
+            }
+        }
+        return null;
+    }
+
+    public Block removeBlock(Block block) {
+        if(blocks.remove(block))
+            return block;
+        return removeBlock(block.getX(), block.getY());
+    }
+
     public Block pushBlockRealPos(BlockType type, int realx, int realy) {
         Block block = Block.create(type);
         block.setRealPosition(realx, realy);
@@ -136,32 +159,43 @@ public class Map {
         p2.addToRealPosition(0, 1); // On descend de 1px
         // Si le pixel d'en dessous correspond à un block
         // Alors on est bien sur le sol
-        if(isOnBlock(p2))
+        if(isOnBlock(p2) != null)
             return true;
         return false;
     }
 
-    public boolean isOnBlock(Player player) {
-        for(Block b : blocks) {
-            if(b.isOnMe(player))
-                return true;
-        }
-        return false;
+    public Block getBlockBelow(Player p) {
+        Player p2 = p.weakClone();
+        p2.addToRealPosition(0, 1); // On descend de 1px
+        // Si le pixel d'en dessous correspond à un block
+        // Alors on est bien sur le sol
+        Block b = isOnBlock(p2);
+        if(b != null)
+            return b;
+        return null;
     }
 
-    public boolean isOnBlock(int x, int y) {
+    public Block isOnBlock(Player player) {
         for(Block b : blocks) {
-            if(b.isOnMe(x, y))
-                return true;
+            if(b.isOnMe(player))
+                return b;
         }
-        return false;
+        return null;
+    }
+
+    public Block isOnBlock(int realX, int realY) {
+        for(Block b : blocks) {
+            if(b.isOnMe(realX, realY))
+                return b;
+        }
+        return null;
     }
 
     public boolean isOut(Player p) {
         int x1 = p.getRealX(),
-        x2 = x1 + p.getSize(),
+        x2 = x1 + p.getSize() - 1,
         y1 = p.getRealY(),
-        y2 = y1 + p.getSize();
+        y2 = y1 + p.getSize() - 1;
 
         return isOut(x1, y1) && isOut(x1, y2) && isOut(x2, y1) && isOut(x2, y2);
     }
@@ -179,11 +213,11 @@ public class Map {
         Player p2 = player.weakClone();
         p2.addToRealPosition(addX, addY);
         if(isOut(p2)) {
-            System.err.println("Player at x:"+x+" , y:"+y+" is out of map ! Cannot move player.");
+            // System.err.println("Player at x:"+x+" , y:"+y+" is out of map ! Cannot move player.");
             return false;
         }
-        if(isOnBlock(p2)) {
-            System.err.println("x:"+x+" , y:"+y+" is on a block ! Cannot move player.");
+        if(isOnBlock(p2) != null) {
+            // System.err.println("x:"+x+" , y:"+y+" is on a block ! Cannot move player.");
             return false;
         }
         return true;
@@ -217,6 +251,7 @@ public class Map {
             }
             p.setVelY(0);
             p.setJumping(false);
+            p.getAction().setWalking(false);
         }).start();
     }
 

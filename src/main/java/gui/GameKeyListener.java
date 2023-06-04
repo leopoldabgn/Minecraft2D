@@ -3,9 +3,11 @@ package gui;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import model.Block;
 import model.Game;
 import model.Map;
 import model.Player;
+import model.Player.PlayerAction;
 
 public class GameKeyListener extends KeyAdapter {
     
@@ -13,6 +15,9 @@ public class GameKeyListener extends KeyAdapter {
     private Game game;
 
     private boolean leftPressed, rightPressed;
+
+    private long timeBetweenActions = 350,
+                startActionTime;
 
     public GameKeyListener(GameView gameView, Game game) {
         this.gameView = gameView;
@@ -25,11 +30,30 @@ public class GameKeyListener extends KeyAdapter {
             return;
         Map map = game.getMap();
         Player p = game.getMainPlayer();
+        PlayerAction pAction = p.getAction();
+        Block block;
 
         switch(e.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE:
+                // TODO: Open settings page
+                Window.currentWindow.dispose();
+                System.exit(0);
+            case KeyEvent.VK_E:
+                if(!pAction.isSneaking())
+                    break;
+                
+                if(System.currentTimeMillis() - startActionTime <= timeBetweenActions)
+                    return;
+                startActionTime = System.currentTimeMillis();
+
+                block = map.getBlockBelow(p);
+                if(block != null) // && have pickaxe ?
+                    map.removeBlock(block); // TODO: add block to player inventory
+                break;
             case KeyEvent.VK_SPACE:
             case KeyEvent.VK_UP:
                 if(map.isOnGround(p) && !p.isJumping()) {
+                    pAction.setJumping();
                     map.startJumping(p);
                 }
                 break;
@@ -37,14 +61,24 @@ public class GameKeyListener extends KeyAdapter {
             case KeyEvent.VK_RIGHT:
                 rightPressed = true;
                 p.setVelX(1);
+                if(!pAction.isWalkingRight())
+                    pAction.setWalking(false);
+                // else
+                //     pAction.nextTexture();
                 break;
             case KeyEvent.VK_A:
             case KeyEvent.VK_LEFT:
                 leftPressed = true;
                 p.setVelX(-1);
+                if(!pAction.isWalkingLeft())
+                    pAction.setWalking(true);
+                break;
+            case KeyEvent.VK_SHIFT:
+            case KeyEvent.VK_DOWN:
+                if(p.getVelX() == 0 && p.getVelY() == 0 && !pAction.isSneaking())
+                    pAction.setSneak();
                 break;
         }
-
     }
         
 
@@ -53,6 +87,7 @@ public class GameKeyListener extends KeyAdapter {
         if(gameView == null || game == null)
             return;
         Player p = game.getMainPlayer();
+        PlayerAction pAction = p.getAction();
 
         switch(e.getKeyCode()) {
             case KeyEvent.VK_SPACE:
@@ -65,6 +100,11 @@ public class GameKeyListener extends KeyAdapter {
             case KeyEvent.VK_A:
             case KeyEvent.VK_LEFT:
                 leftPressed = false;
+                break;
+            case KeyEvent.VK_SHIFT:
+            case KeyEvent.VK_DOWN:
+                if(pAction.isSneaking())
+                    pAction.setPreviousAction();
                 break;
         }
 

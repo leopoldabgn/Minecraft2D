@@ -49,16 +49,17 @@ public class Textures {
     }
 
     // Fonctionne pareil que loadBlockTexture
-    public static Image loadPlayerTexture(String texture) {
+    public static Image loadPlayerTexture(PlayerType playerType, String texture) {
+        texture = playerType.getType()+"/"+texture;
         Image img = PLAYER_TEXTURES.get(texture);
         if(img == null) {
             try {
                 img = App.getImage(PLAYERS+texture+EXT_FILE);
             } catch (IOException e) {
-                System.err.println("Erreur ouverture image: "+BLOCKS+texture+EXT_FILE);
+                System.err.println("Erreur ouverture image: "+PLAYERS+texture+EXT_FILE);
                 img = DEFAULT_TEXTURE;
             }
-            BLOCK_TEXTURES.put(texture, img);
+            PLAYER_TEXTURES.put(texture, img);
         }
         return img;
     }

@@ -15,7 +15,6 @@ import model.Player;
 import model.PlayerType;
 
 public class Window extends JFrame {
-	private static final long serialVersionUID = 1L;
 
 	public static Color BACKGROUND_COLOR = new Color(41, 50, 65),
 						DARK_COLOR1 = new Color(61, 90, 128),
@@ -23,6 +22,8 @@ public class Window extends JFrame {
 						LIGHT_COLOR1 = new Color(152, 193, 217),
 						LIGHT_COLOR2 = new Color(224, 251, 252),
 						RED = new Color(238, 108, 77);
+
+	public static Window currentWindow = null;
 
 	private GameView gameView;
 	private Game game;
@@ -61,7 +62,7 @@ public class Window extends JFrame {
 				// heightSpace enleve l'espace ajouté au debut du constructeur de Window
 				Dimension newSize = new Dimension(getWidth(), getHeight() - heightSpace);
 		
-                System.out.println("Nouvelle taille : " + newSize.getWidth() + "x" + newSize.getHeight());
+                // System.out.println("Nouvelle taille : " + newSize.getWidth() + "x" + newSize.getHeight());
 				if(gameView != null) {
 					gameView.getMapView().setPreferredSize(newSize);
 				}
@@ -119,6 +120,7 @@ public class Window extends JFrame {
         });
 
 		this.setVisible(true);
+		Window.currentWindow = this;
 	}
 	
 	public void clearWindow() {

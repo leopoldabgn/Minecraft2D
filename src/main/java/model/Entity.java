@@ -4,9 +4,9 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 
-public abstract class Entity {
+public class Entity {
     
-    protected Point position;
+    protected Point position = new Point(0, 0);
     protected String texture;
     // private transient Image texture;
 
@@ -18,7 +18,7 @@ public abstract class Entity {
     public Entity(String texture, int coeffSize, Point position) {
         this.texture = texture;
         this.coeffSize = coeffSize;
-        this.position = new Point(position);
+        setPosition((int)position.getX(), (int)position.getY());
     }
 
     // origin represente la coordonnée en haut a gauche de l'écran
@@ -34,16 +34,16 @@ public abstract class Entity {
 
     public boolean isOnMe(Entity e) {
         int x1 = e.getRealX(),
-            x2 = x1 + e.getSize(),
+            x2 = x1 + e.getSize()-1,
             y1 = e.getRealY(),
-            y2 = y1 + e.getSize();
+            y2 = y1 + e.getSize()-1;
 
         return isOnMe(x1, y1) || isOnMe(x2, y1) || isOnMe(x1, y2) || isOnMe(x2, y2);
     }
 
     public boolean isOnMe(int x2, int y2) {
-        return x2 >= getRealX() && x2 <= getRealX() + getSize() &&
-               y2 >= getRealY() && y2 <= getRealY() + getSize(); 
+        return x2 >= getRealX() && x2 < getRealX() + getSize() &&
+               y2 >= getRealY() && y2 < getRealY() + getSize(); 
     }
 
     public int getSize() {

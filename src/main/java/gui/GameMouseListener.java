@@ -17,10 +17,14 @@ public class GameMouseListener extends MouseAdapter {
         this.game = game;
     }
 
+    static int y = 0;
+
     @Override
     public void mousePressed(MouseEvent e) {
         Map map = game.getMap();
-        map.pushBlock(BlockType.BRICK, e.getX() - 50, e.getY() - 50);
+        // map.pushBlock(BlockType.BRICK, e.getX() - 50, e.getY() - 50);
+        map.moveOrigin(0, y);
+        y += e.getY();
     }
 
 }
