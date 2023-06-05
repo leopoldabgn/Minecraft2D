@@ -14,8 +14,9 @@ public class Player extends Entity {
  
     private boolean isFalling, isJumping;
 
-    private long lastTimeMove;
-    public static long DELAY_MOVE = 3; // 5ms
+    private long lastTimeMove, lastTimeAction;
+    public static long DELAY_MOVE = 3; // 3ms
+    public static long DELAY_ACTION = 50;
 
     private Player() {}
 
@@ -24,8 +25,10 @@ public class Player extends Entity {
         this.pseudo = pseudo;
         this.action = new PlayerAction(new Action("walk_left", 4),
                                        new Action("walk_right", 4),
-                                       new Action("sneak", 1),
-                                       new Action("jump", 1));
+                                       new Action("jump_left", 1),
+                                       new Action("jump_right", 1),
+                                       new Action("sneak", 1)
+                                       );
     }
 
     public static Player createPlayer(PlayerType type, String pseudo) {
@@ -38,15 +41,16 @@ public class Player extends Entity {
 
     public class PlayerAction {
 
-        private Action WALK_LEFT, WALK_RIGHT, SNEAK, JUMP;
+        private Action WALK_LEFT, WALK_RIGHT, JUMP_LEFT, JUMP_RIGHT, SNEAK;
         private Action currentAction, prevAction;
 
-        public PlayerAction(Action WALK_LEFT, Action WALK_RIGHT, Action SNEAK, Action JUMP) {
+        public PlayerAction(Action WALK_LEFT, Action WALK_RIGHT, Action JUMP_LEFT, Action JUMP_RIGHT, Action SNEAK) {
             this.WALK_LEFT = WALK_LEFT;
             this.WALK_RIGHT = WALK_RIGHT;
-            this.SNEAK = SNEAK;
-            this.JUMP = JUMP;
+            this.JUMP_LEFT = JUMP_LEFT;
+            this.JUMP_RIGHT = JUMP_RIGHT;
             this.currentAction = WALK_RIGHT;
+            this.SNEAK = SNEAK;
             setWalking(false); // On met walking right par defaut. Et on met a jour prevAction
         }
 
@@ -58,8 +62,12 @@ public class Player extends Entity {
             return currentAction == WALK_LEFT;
         }
 
-        public boolean isJumping() {
-            return currentAction == JUMP;
+        public boolean isJumpingLeft() {
+            return currentAction == JUMP_LEFT;
+        }
+
+        public boolean isJumpingRight() {
+            return currentAction == JUMP_RIGHT;
         }
 
         public boolean isSneaking() {
@@ -79,10 +87,13 @@ public class Player extends Entity {
             Player.this.texture = getCurrentTexture();
         }
 
-        public void setJumping() {
-            if(!isJumping())
+        public void setJumping(boolean left) {
+            if(prevAction != currentAction)
                 prevAction = currentAction;
-            currentAction = JUMP;
+            if(left)
+                currentAction = JUMP_LEFT;
+            else
+                currentAction = JUMP_RIGHT;
             Player.this.texture = getCurrentTexture();
         }
 
@@ -93,6 +104,16 @@ public class Player extends Entity {
                 currentAction = WALK_LEFT;
             else
                 currentAction = WALK_RIGHT;
+            Player.this.texture = getCurrentTexture();
+        }
+
+        public void resetTextureProgress() {
+            currentAction.resetProgress();
+            Player.this.texture = getCurrentTexture();
+        }
+
+        public void nextTexture() {
+            currentAction.nextTexture();
             Player.this.texture = getCurrentTexture();
         }
 
@@ -126,7 +147,7 @@ public class Player extends Entity {
         public void nextTexture() {
             if(progress == maxTextures)
                 resetProgress();
-            else
+            else 
                 progress++;
         }
 
@@ -153,10 +174,22 @@ public class Player extends Entity {
     }
 
     public boolean move(boolean restrictX, boolean restrictY) {
+        if(velocity.getX() == 0 && velocity.getY() == 0)
+            return false;
         if(System.currentTimeMillis() - lastTimeMove >= Player.DELAY_MOVE) {
             addToRealPosition(restrictX ? 0 : getVelX(),
                           restrictY ? 0 : getVelY());
+
             lastTimeMove = System.currentTimeMillis();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean refreshActionTexture() {
+        if(System.currentTimeMillis() - lastTimeAction >= Player.DELAY_ACTION) {
+            action.nextTexture();
+            lastTimeAction = System.currentTimeMillis();
             return true;
         }
         return false;

@@ -53,12 +53,15 @@ public class GameView extends JPanel implements ActionListener {
             int mapX = p.getRealX() - midPlayerX;
             int mapY = p.getRealY() - midPlayerY;
             map.moveOrigin(mapX, mapY);
+            // On rafraichit la texture par exemple si il marche
+            p.refreshActionTexture();
         }
 
         if(!p.isJumping() && !p.isFalling() && !map.isOnGround(p)) {
             // Launch Thread
             map.startFalling(p);
         }
+
 
         mapView.repaint();
     }

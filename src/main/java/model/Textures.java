@@ -57,6 +57,7 @@ public class Textures {
                 img = App.getImage(PLAYERS+texture+EXT_FILE);
             } catch (IOException e) {
                 System.err.println("Erreur ouverture image: "+PLAYERS+texture+EXT_FILE);
+                e.printStackTrace();
                 img = DEFAULT_TEXTURE;
             }
             PLAYER_TEXTURES.put(texture, img);

@@ -53,7 +53,7 @@ public class GameKeyListener extends KeyAdapter {
             case KeyEvent.VK_SPACE:
             case KeyEvent.VK_UP:
                 if(map.isOnGround(p) && !p.isJumping()) {
-                    pAction.setJumping();
+                    pAction.setJumping(pAction.isWalkingLeft());
                     map.startJumping(p);
                 }
                 break;
@@ -72,6 +72,8 @@ public class GameKeyListener extends KeyAdapter {
                 p.setVelX(-1);
                 if(!pAction.isWalkingLeft())
                     pAction.setWalking(true);
+                // else
+                //     pAction.nextTexture();
                 break;
             case KeyEvent.VK_SHIFT:
             case KeyEvent.VK_DOWN:
@@ -97,9 +99,12 @@ public class GameKeyListener extends KeyAdapter {
             case KeyEvent.VK_D:
             case KeyEvent.VK_RIGHT:
                 rightPressed = false;
+                pAction.resetTextureProgress();
+                break;
             case KeyEvent.VK_A:
             case KeyEvent.VK_LEFT:
                 leftPressed = false;
+                pAction.resetTextureProgress();
                 break;
             case KeyEvent.VK_SHIFT:
             case KeyEvent.VK_DOWN:
@@ -117,6 +122,14 @@ public class GameKeyListener extends KeyAdapter {
         else if(!rightPressed && !leftPressed) {
             p.setVelX(0);
         }
+    }
+
+    public boolean isLeftPressed() {
+        return leftPressed;
+    }
+
+    public boolean isRightPressed() {
+        return rightPressed;
     }
 
 }

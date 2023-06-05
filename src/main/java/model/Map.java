@@ -251,7 +251,7 @@ public class Map {
             }
             p.setVelY(0);
             p.setJumping(false);
-            p.getAction().setWalking(false);
+            p.getAction().setPreviousAction();
         }).start();
     }
 
