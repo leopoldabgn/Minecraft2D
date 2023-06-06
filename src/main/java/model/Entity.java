@@ -83,7 +83,7 @@ public class Entity {
     }
 
     public void addToPosition(int addX, int addY) {
-        this.setPosition(getX() + addX * DEFAULT_BLOCK_SIZE, getY() + addY * DEFAULT_BLOCK_SIZE);
+        this.setRealPosition(getRealX() + addX * DEFAULT_BLOCK_SIZE, getRealY() + addY * DEFAULT_BLOCK_SIZE);
     }
 
     public void setPosition(int x, int y) {

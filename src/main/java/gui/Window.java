@@ -37,13 +37,13 @@ public class Window extends JFrame {
 	boolean isFullscreen = false;
 
 	public Window(int w, int h) {
-		this.setTitle("Worms");
+		this.setTitle("Minecraft2D");
 		this.width = w;
 		this.height = h;
 		this.setMinimumSize(new Dimension(width, height+heightSpace)); // width+75, height));
 		this.setResizable(true);
 		this.setLocationRelativeTo(null);
-		// this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		

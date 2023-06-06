@@ -31,7 +31,7 @@ public class GameKeyListener extends KeyAdapter {
         Map map = game.getMap();
         Player p = game.getMainPlayer();
         PlayerAction pAction = p.getAction();
-        Block block;
+        Block block = null;
 
         switch(e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE:
@@ -39,16 +39,26 @@ public class GameKeyListener extends KeyAdapter {
                 Window.currentWindow.dispose();
                 System.exit(0);
             case KeyEvent.VK_E:
-                if(!pAction.isSneaking())
-                    break;
-                
                 if(System.currentTimeMillis() - startActionTime <= timeBetweenActions)
                     return;
                 startActionTime = System.currentTimeMillis();
 
-                block = map.getBlockBelow(p);
+                if(pAction.isSneaking()) {
+                    block = map.getBlockBelow(p, 1);
+                }
+                else {
+                    int maxDist = 2;
+                    for(int i=0;block == null && i < maxDist;i++) {
+                        if(pAction.isWalkingRight()) {
+                            block = map.getBlockRight(p, i);
+                        }
+                        else if(pAction.isWalkingLeft()) {
+                            block = map.getBlockLeft(p, i);
+                        }
+                    }
+                }
                 if(block != null) // && have pickaxe ?
-                    map.removeBlock(block); // TODO: add block to player inventory
+                        map.removeBlock(block); // TODO: add block to player inventory
                 break;
             case KeyEvent.VK_SPACE:
             case KeyEvent.VK_UP:

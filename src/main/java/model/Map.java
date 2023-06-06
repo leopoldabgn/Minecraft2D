@@ -4,12 +4,9 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.Random;
 
 public class Map {
-    
-    private Lock mutex = new ReentrantLock();
 
     private Game game;
     private ArrayList<Player> players;
@@ -50,6 +47,7 @@ public class Map {
     }
 
     public void draw(Graphics g) {
+        // TODO: Peut etre ne pas redessiner tous les blocks a chaque fois ?
         // On commence par dessiner le terrain en arrière plan
         for(Block b : blocks) {
             if(isOnScreen(b))
@@ -164,11 +162,26 @@ public class Map {
         return false;
     }
 
-    public Block getBlockBelow(Player p) {
+    public Block getBlockLeft(Player p, int distance) {
+        return getBlockRight(p, -distance);
+    }
+
+    public Block getBlockRight(Player p, int distance) {
+        return getBlock(distance, 0, p);
+    }
+
+    public Block getBlockAbove(Player p, int distance) {
+        return getBlockBelow(p, -distance);
+    }
+
+    public Block getBlockBelow(Player p, int distance) {
+        return getBlock(0, distance, p);
+    }
+
+    public Block getBlock(int addX, int addY, Player p) {
         Player p2 = p.weakClone();
-        p2.addToRealPosition(0, 1); // On descend de 1px
-        // Si le pixel d'en dessous correspond à un block
-        // Alors on est bien sur le sol
+        p2.addToPosition(addX, addY);
+
         Block b = isOnBlock(p2);
         if(b != null)
             return b;
@@ -207,8 +220,6 @@ public class Map {
     }
 
     public boolean canMovePlayer(Player player, int addX, int addY) {
-        int x = player.getX() + addX;
-        int y = player.getY() + addY;
         // On crée un clone de joueur pour tester si on peut bouger le joueur
         Player p2 = player.weakClone();
         p2.addToRealPosition(addX, addY);
@@ -279,6 +290,60 @@ public class Map {
             s += b+"\n";
         }
         return s;
+    }
+
+    public void generateTree(int x, int y, int trunkSize) {
+        int trunkHeight = Math.max(trunkSize, 1); // Calcul de la hauteur du tronc avec un minimum de 1
+    
+        // Génération du tronc de l'arbre
+        for (int i = 0; i < trunkHeight; i++) {
+            pushBlock(BlockType.OAK_LOG, x, y - i);
+        }
+    
+        // Génération des feuilles de l'arbre
+        int leafSize = (int) Math.ceil((double) trunkSize / 2.0); // Calcul de la taille des feuilles arrondie supérieurement
+        int leafStartY = y - trunkHeight; // Position de départ des feuilles (même niveau que le tronc)
+    
+        for (int dy = -leafSize; dy <= 0; dy++) {
+            int leafWidth = leafSize + dy;
+    
+            for (int dx = -leafWidth; dx <= leafWidth; dx++) {
+                for (int dz = -leafWidth; dz <= leafWidth; dz++) {
+                    int blockX = x + dx;
+                    int blockY = leafStartY + dy;
+    
+                    pushBlock(BlockType.OAK_LEAVES, blockX, blockY);
+                }
+            }
+        }
+    }
+    
+    public void generateTrees(int leftBound, int rightBound, int y, double probability) {
+        Random random = new Random();
+
+        int minX = leftBound;
+        int maxX = rightBound;
+        int minY = y;
+        int maxY = y;
+
+        int minSpacing = 15;
+        int maxSpacing = 50;
+
+        int minTrunkSize = 3;
+        int maxTrunkSize = 7;
+
+        for (int x = minX; x <= maxX; x += minSpacing + random.nextInt(maxSpacing - minSpacing + 1)) {
+            if (random.nextDouble() <= probability) {
+                int trunkSize = minTrunkSize + random.nextInt(maxTrunkSize - minTrunkSize + 1);
+                generateTree(x, random.nextInt(maxY - minY + 1) + minY, trunkSize);
+            }
+        }
+    }
+
+
+
+    public void generateTrees(int y, double probability) {
+        generateTrees(BOUND_MAP_X[0], BOUND_MAP_X[1], y, probability);
     }
 
 }

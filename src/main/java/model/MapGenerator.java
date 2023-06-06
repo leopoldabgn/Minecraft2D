@@ -71,6 +71,10 @@ public class MapGenerator {
 
         map.pushLayer(map, BlockType.BEDROCK, y);
 
+        // map.generateTree(10, 0, 3);
+        
+        map.generateTrees(0, 0.75);
+
         return map;
     }
 

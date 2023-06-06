@@ -3,10 +3,14 @@ package gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
 import model.Map;
+import model.Textures;
 
 public class MapView extends JPanel {
     
@@ -27,9 +31,12 @@ public class MapView extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponents(g);
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+       
         // On dessine l'arrière plan
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, getWidth(), getHeight());
+        Image sky = Textures.loadBackgroundTexture("sky");
+        g.drawImage(sky, 0, 0, getWidth(), getHeight(), null, null);
 
         if(map == null)
             return;

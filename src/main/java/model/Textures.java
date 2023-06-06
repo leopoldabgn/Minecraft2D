@@ -10,12 +10,14 @@ public class Textures {
     
     private static String BLOCKS = "blocks/",
                           PLAYERS = "players/",
+                          BACKGROUND = "background/",
                           EXT_FILE = ".png";
 
     private static Image DEFAULT_TEXTURE;
 
     private static HashMap<String, Image> PLAYER_TEXTURES = new HashMap<>();
     private static HashMap<String, Image> BLOCK_TEXTURES = new HashMap<>();
+    private static HashMap<String, Image> BACKGROUND_TEXTURES = new HashMap<>();
 
     // Faire en sorte de Load uniquement les textures dont a besoin ?
     public Textures() {
@@ -57,10 +59,23 @@ public class Textures {
                 img = App.getImage(PLAYERS+texture+EXT_FILE);
             } catch (IOException e) {
                 System.err.println("Erreur ouverture image: "+PLAYERS+texture+EXT_FILE);
-                e.printStackTrace();
                 img = DEFAULT_TEXTURE;
             }
             PLAYER_TEXTURES.put(texture, img);
+        }
+        return img;
+    }
+
+    public static Image loadBackgroundTexture(String texture) {
+        Image img = BACKGROUND_TEXTURES.get(texture);
+        if(img == null) {
+            try {
+                img = App.getImage(BACKGROUND+texture+EXT_FILE);
+            } catch (IOException e) {
+                System.err.println("Erreur ouverture image: "+BACKGROUND+texture+EXT_FILE);
+                img = DEFAULT_TEXTURE;
+            }
+            BACKGROUND_TEXTURES.put(texture, img);
         }
         return img;
     }

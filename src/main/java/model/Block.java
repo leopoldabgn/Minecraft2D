@@ -25,7 +25,21 @@ public class Block extends Entity {
         // Get Image object for texture
         Image img = Textures.loadBlockTexture(texture);
         g.drawImage(img, x, y, getSize(), getSize(), null);
+
+        // drawFissures(g, x, y, getSize());
     }
+
+
+    // private void drawFissures(Graphics g, int x, int y, int size) {
+    //     g.setColor(new Color(0, 0, 0)); // Couleur noire avec transparence
+    //     int sqrSize = size / 16;
+
+    //     for(int i=0;i<8;i++) {
+    //         g.fillRect(x + i * sqrSize, y + i * sqrSize , sqrSize, sqrSize);
+    //     }
+        
+
+    // }
 
     public BlockType getType() {
         return type;
