@@ -2,4 +2,4 @@
 export ARGS=`echo "$@"`
 mvn package
 clear
-java -cp ./target/worms*.jar launcher.App "$ARGS"
+java -cp ./target/minecraft*.jar launcher.App "$ARGS"
