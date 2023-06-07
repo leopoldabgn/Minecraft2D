@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,12 +18,22 @@ public class GameView extends JPanel implements ActionListener {
 
     private Game game;
     private MapView mapView;
+    private ItemsBarView itemsBarView;
 
     public GameView(Game game) {
         this.game = game;
         this.mapView = new MapView(game.getMap());
+        this.itemsBarView = new ItemsBarView();
         this.setBackground(Color.DARK_GRAY);
+        // this.setLayout(null);
+
+        // mapView.setBounds(0, 0, getWidth(), getHeight());
+        // itemsBarView.setLocation((getWidth() - itemsBarView.getWidth()) / 2,
+        //                         getHeight() - itemsBarView.getHeight() - 20);
+
         this.add(mapView);
+        // this.add(itemsBarView);
+        
         timer.start();
     }
 
