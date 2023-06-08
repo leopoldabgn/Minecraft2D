@@ -154,6 +154,7 @@ public class Window extends JFrame {
 		gameMouseListener = new GameMouseListener(gameView, game);
 		this.addKeyListener(gameKeyListener);
 		this.addMouseListener(gameMouseListener);
+		this.addMouseWheelListener(gameMouseListener);
 
 		this.getContentPane().add(lastPanel);
 		refreshWindow();

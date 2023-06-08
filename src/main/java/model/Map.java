@@ -2,6 +2,7 @@ package model;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
@@ -47,8 +48,11 @@ public class Map {
     }
 
     public void draw(Graphics g) {
-        // TODO: Peut etre ne pas redessiner tous les blocks a chaque fois ?
-        // On commence par dessiner le terrain en arrière plan
+        
+        // On dessine l'arrière plan
+        Image sky = Textures.loadBackgroundTexture("sky");
+        g.drawImage(sky, 0, 0, getWidth(), getHeight(), null, null);
+
         for(Block b : blocks) {
             if(isOnScreen(b))
                 b.draw(g, origin);

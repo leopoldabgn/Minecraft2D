@@ -7,10 +7,12 @@ public class Game {
     private ArrayList<Player> players = new ArrayList<>();
     private Player mainPlayer;
     private Map map;
+    private ItemsBar itemsBar;
 
     public Game(Player player, int mapWidth, int mapHeight) {
         this.mainPlayer = player;
         players.add(player);
+        this.itemsBar = new ItemsBar();
         this.map = MapGenerator.underground(this, mapWidth, mapHeight);
     }
 
@@ -26,6 +28,10 @@ public class Game {
 
     public Map getMap() {
         return map;
+    }
+
+    public ItemsBar getItemsBar() {
+        return itemsBar;
     }
 
     public Player getMainPlayer() {

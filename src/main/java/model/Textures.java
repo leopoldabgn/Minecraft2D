@@ -33,6 +33,12 @@ public class Textures {
         return DEFAULT_TEXTURE;
     }
 
+    // Parcourt tous les HashMap pour trouver la texture
+    // Pour le moment seul les blocks peuvent vraiment etre des items
+    public static Image loadItemTexture(String texture) {
+        return loadBlockTexture(texture);
+    }
+
     // Permet de créer un objet Image pour la texture
     // Si elle a deja ete chargé, on renvoie directement
     // son objet Image correspondant dans le dictionnaire

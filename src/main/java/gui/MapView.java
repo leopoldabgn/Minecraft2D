@@ -4,20 +4,21 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
+import model.ItemsBar;
 import model.Map;
-import model.Textures;
 
 public class MapView extends JPanel {
     
     private Map map;
+    private ItemsBar itemsBar;
 
-    public MapView(Map map) {
+    public MapView(Map map, ItemsBar itemsBar) {
         this.map = map;
+        this.itemsBar = itemsBar;
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(map.getWidth(), map.getHeight()));
     }
@@ -31,17 +32,19 @@ public class MapView extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponents(g);
-        Graphics2D g2d = (Graphics2D)g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-       
-        // On dessine l'arrière plan
-        Image sky = Textures.loadBackgroundTexture("sky");
-        g.drawImage(sky, 0, 0, getWidth(), getHeight(), null, null);
 
         if(map == null)
             return;
+
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         // On dessine la map
-        map.draw(g);
+        map.draw(g2d);
+
+        // On dessine la barre d'items
+        itemsBar.draw(g2d, (getWidth() - ItemsBar.ITEMS_BAR_WIDTH) / 2,
+                           getHeight() - ItemsBar.ITEMS_BAR_HEIGHT - 15);
     }
 
 }

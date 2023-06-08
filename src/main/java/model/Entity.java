@@ -4,19 +4,19 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 
-public class Entity {
+public class Entity extends Item {
     
     protected Point position = new Point(0, 0);
-    protected String texture;
-    // private transient Image texture;
 
     public static int DEFAULT_BLOCK_SIZE = 50;
     protected double coeffSize = 1;
 
-    protected Entity() {}
+    protected Entity() {
+        super("");
+    }
 
     public Entity(String texture, int coeffSize, Point position) {
-        this.texture = texture;
+        super(texture);
         this.coeffSize = coeffSize;
         setPosition((int)position.getX(), (int)position.getY());
     }
