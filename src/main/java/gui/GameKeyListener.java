@@ -26,19 +26,28 @@ public class GameKeyListener extends KeyAdapter {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        pressKey(e.getKeyCode());
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        releaseKey(e.getKeyCode());
+    }
+
+    public void pressKey(int keyCode) {
         if(gameView == null || game == null)
-            return;
+        return;
         Map map = game.getMap();
         Player p = game.getMainPlayer();
         PlayerAction pAction = p.getAction();
         Block block = null;
 
-        switch(e.getKeyCode()) {
+        switch(keyCode) {
             case KeyEvent.VK_ESCAPE:
                 // TODO: Open settings page
                 Window.currentWindow.dispose();
                 System.exit(0);
-            case KeyEvent.VK_E:
+            case KeyEvent.VK_S: // Detruire un block
                 if(System.currentTimeMillis() - startActionTime <= timeBetweenActions)
                     return;
                 startActionTime = System.currentTimeMillis();
@@ -59,6 +68,31 @@ public class GameKeyListener extends KeyAdapter {
                 }
                 if(block != null) // && have pickaxe ?
                         map.removeBlock(block); // TODO: add block to player inventory
+                break;
+            case KeyEvent.VK_W: // Poser un block
+                if(System.currentTimeMillis() - startActionTime <= timeBetweenActions)
+                    return;
+                startActionTime = System.currentTimeMillis();
+
+                // Verifier les blocks devant le joueur
+                // Si c est vide, on l'autorise a poser un block
+                // Cependant, on doit aussi verifier dans la barre d'items
+                // Que le joueur tient bien un bloc dans sa main !
+                // Il faut vérifier ça en premier d'ailleurs ! Avant meme
+                // de voir si il y a un creux devant le joueur
+
+                // int maxDist = 2;
+                // for(int i=0;block == null && i < maxDist;i++) {
+                //     if(pAction.isWalkingRight()) {
+                //         block = map.getBlockRight(p, i);
+                //     }
+                //     else if(pAction.isWalkingLeft()) {
+                //         block = map.getBlockLeft(p, i);
+                //     }
+                // }
+                
+                // if(block != null) // && have pickaxe ?
+                //         map.addBlock(Block.GRASS, x, y....); // TODO: remove block from player inventory
                 break;
             case KeyEvent.VK_SPACE:
             case KeyEvent.VK_UP:
@@ -92,16 +126,14 @@ public class GameKeyListener extends KeyAdapter {
                 break;
         }
     }
-        
 
-    @Override
-    public void keyReleased(KeyEvent e) {
+    public void releaseKey(int keyCode) {
         if(gameView == null || game == null)
             return;
         Player p = game.getMainPlayer();
         PlayerAction pAction = p.getAction();
 
-        switch(e.getKeyCode()) {
+        switch(keyCode) {
             case KeyEvent.VK_SPACE:
             case KeyEvent.VK_UP:
                 // TODO ?
@@ -133,7 +165,7 @@ public class GameKeyListener extends KeyAdapter {
             p.setVelX(0);
         }
     }
-
+    
     public boolean isLeftPressed() {
         return leftPressed;
     }

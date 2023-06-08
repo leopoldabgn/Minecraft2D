@@ -127,8 +127,10 @@ public class Window extends JFrame {
 		this.getContentPane().removeAll();
 		if(gameKeyListener != null)
 			this.removeKeyListener(gameKeyListener);
-		if(gameMouseListener != null)
+		if(gameMouseListener != null) {
 			this.removeMouseListener(gameMouseListener);
+			this.removeMouseWheelListener(gameMouseListener);
+		}
 	}
 
 	public void refreshWindow() {
@@ -151,7 +153,7 @@ public class Window extends JFrame {
 		this.lastPanel = gameView;
 		
 		gameKeyListener = new GameKeyListener(gameView, game);
-		gameMouseListener = new GameMouseListener(gameView, game);
+		gameMouseListener = new GameMouseListener(gameView, game, gameKeyListener);
 		this.addKeyListener(gameKeyListener);
 		this.addMouseListener(gameMouseListener);
 		this.addMouseWheelListener(gameMouseListener);

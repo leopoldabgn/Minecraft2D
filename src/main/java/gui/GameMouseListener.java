@@ -1,31 +1,36 @@
 package gui;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 import model.Game;
 import model.ItemsBar;
-import model.Map;
 
 public class GameMouseListener extends MouseAdapter {
     
     private GameView gameView;
     private Game game;
+    private GameKeyListener gameKeyListener;
 
-    public GameMouseListener(GameView gameView, Game game) {
+    public GameMouseListener(GameView gameView, Game game, GameKeyListener gameKeyListener) {
         this.gameView = gameView;
         this.game = game;
+        this.gameKeyListener = gameKeyListener;
     }
 
     static int y = 0;
 
     @Override
     public void mousePressed(MouseEvent e) {
-        Map map = game.getMap();
-        // map.pushBlock(BlockType.BRICK, e.getX() - 50, e.getY() - 50);
-        map.moveOrigin(0, y);
-        y += e.getY();
+        
+        if(e.getButton() == MouseEvent.BUTTON1) {
+            gameKeyListener.pressKey(KeyEvent.VK_E);
+        }
+        else if(e.getButton() == MouseEvent.BUTTON2) {
+            
+        }
     }
 
     @Override
