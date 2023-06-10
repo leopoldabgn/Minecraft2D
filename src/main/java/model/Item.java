@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-import javax.swing.plaf.TextUI;
-
 public class Item {
 
     public static Color ITEM_BORDER = new Color(120, 130, 140);
@@ -14,15 +12,21 @@ public class Item {
     public static Color EMPTY = new Color(0, 0, 0, 127);
 
     protected String texture;
-    private int nb = 0; // nombre de fois qu'il possède l'item
+    private int nb = 0, maxStack = 64; // nombre de fois qu'il possède l'item
     private boolean isSelected;
 
     public Item() {}
 
-    public Item(String texture) {
+    public Item(String texture, int maxStack) {
+        this(texture, 1, maxStack);
+    }
+
+    public Item(String texture, int nb, int maxStack) {
         this.texture = texture;
-        if(texture != null)
-            nb = 1;
+        this.maxStack = maxStack;
+        if(texture != null) {
+            this.nb = nb;
+        }
     }
 
     protected void drawItem(Graphics2D g, int x, int y) {
@@ -60,12 +64,27 @@ public class Item {
         nb = texture == null ? 0 : 1;
     }
 
+    public int getNb() {
+        return nb;
+    }
+
     public void setNb(int nb) {
         if(texture == null) {
             System.err.println("texture null, you cannot change the nb");
             return;
         }
         this.nb = nb < 0 ? 0 : nb;
+    }
+
+    public int getMaxStack() {
+        return maxStack;
+    }
+
+    public boolean add(int nb) {
+        if(this.nb + nb > maxStack || this.nb - nb < 0)
+            return false;
+        this.nb += nb;
+        return true;
     }
 
     public void addOne() {
@@ -76,12 +95,23 @@ public class Item {
         setNb(nb-1);
     }
 
+    public int remainingBeforeFull() {
+        return maxStack - nb;
+    }
+
     public boolean isSelected() {
         return isSelected;
     }
 
     public void setSelected(boolean selected) {
         this.isSelected = selected;
+    }
+
+
+
+    @Override
+    public boolean equals(Object obj) {
+        return ((Item)obj).texture.equals(texture);
     }
 
 }

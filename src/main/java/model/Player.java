@@ -3,6 +3,7 @@ package model;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.util.ArrayList;
 
 public class Player extends Entity {
     
@@ -155,6 +156,46 @@ public class Player extends Entity {
             return nom;
         }
     
+    }
+
+    public static class Inventory {
+        private ArrayList<Item> items = new ArrayList<>();
+        private int maxSlots = 9; // Pour l'instant juste le nombre de slots de la barre d'items
+
+        public Inventory() {}
+
+        public Item getItemWithMinNb(Item item) {
+            Item minItem = null;
+            for(Item it : items) {
+                if(item.equals(it)) {
+                    if(minItem == null || it.getNb() < minItem.getNb())
+                        minItem = it;
+                }
+            }
+            return minItem;
+        }
+
+        public boolean addItem(Item item) {
+            Item minItem = getItemWithMinNb(item);
+            if(minItem == null) {
+                if(items.size() == maxSlots)
+                    return false;
+                items.add(item);
+                return true;
+            }
+            int remainingBFull = minItem.remainingBeforeFull();
+            int toAdd = Math.min(item.getNb(), remainingBFull);
+            minItem.add(toAdd); // remainingBFull can be 0
+            item.add(-toAdd); // On enleve ce qu'on vient d'ajouter
+
+            // Si il reste un nombre > 0 d'items a ajouter, on ajoute un nouvel
+            // objet Item a la liste
+            if(item.getNb() > 0) {
+                minItem.add(item.getNb());
+            }
+            return true;
+        }
+
     }
 
     // origin represente la coordonnée en haut a gauche de l'écran

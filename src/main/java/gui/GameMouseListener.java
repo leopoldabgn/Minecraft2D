@@ -20,13 +20,11 @@ public class GameMouseListener extends MouseAdapter {
         this.gameKeyListener = gameKeyListener;
     }
 
-    static int y = 0;
-
     @Override
     public void mousePressed(MouseEvent e) {
         
         if(e.getButton() == MouseEvent.BUTTON1) {
-            gameKeyListener.pressKey(KeyEvent.VK_E);
+            gameKeyListener.pressKey(KeyEvent.VK_S);
         }
         else if(e.getButton() == MouseEvent.BUTTON2) {
             

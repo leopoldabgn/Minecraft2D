@@ -9,7 +9,7 @@ public class Block extends Entity {
     private BlockType type;
 
     private Block(BlockType type, int x, int y) {
-        super(type.getTexture(), 1, new Point(x, y));
+        super(type.getTexture(), type.getMaxStack(), 1, new Point(x, y));
         this.type = type;
     }
 

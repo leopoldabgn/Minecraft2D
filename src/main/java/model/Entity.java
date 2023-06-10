@@ -12,11 +12,17 @@ public class Entity extends Item {
     protected double coeffSize = 1;
 
     protected Entity() {
-        super("");
+        super("", 0);
+    }
+
+    public Entity(String texture, int maxStack, int coeffSize, Point position) {
+        super(texture, maxStack); // maxStack = 0 -> on ne peut pas le stocker
+        this.coeffSize = coeffSize;
+        setPosition((int)position.getX(), (int)position.getY());
     }
 
     public Entity(String texture, int coeffSize, Point position) {
-        super(texture);
+        super(texture, 0); // maxStack = 0 -> on ne peut pas le stocker
         this.coeffSize = coeffSize;
         setPosition((int)position.getX(), (int)position.getY());
     }
