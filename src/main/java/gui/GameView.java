@@ -21,7 +21,7 @@ public class GameView extends JPanel implements ActionListener {
 
     public GameView(Game game) {
         this.game = game;
-        this.mapView = new MapView(game.getMap(), game.getItemsBar());
+        this.mapView = new MapView(game.getMap(), game.getPlayerItemsBar());
         this.setBackground(Color.DARK_GRAY);
         
         this.add(mapView);

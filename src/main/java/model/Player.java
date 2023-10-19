@@ -12,6 +12,7 @@ public class Player extends Entity {
     private int score;
     private PlayerAction action;
     private Point velocity = new Point(0, 0); // rapidite
+    private Inventory inventory = new Inventory();
  
     private boolean isFalling, isJumping;
 
@@ -161,6 +162,7 @@ public class Player extends Entity {
     public static class Inventory {
         private ArrayList<Item> items = new ArrayList<>();
         private int maxSlots = 9; // Pour l'instant juste le nombre de slots de la barre d'items
+        private ItemsBar itemsBar = new ItemsBar();
 
         public Inventory() {}
 
@@ -175,12 +177,16 @@ public class Player extends Entity {
             return minItem;
         }
 
+        // On ajoute l'item a l'inventaire
+        // Cette fonction se debrouille aussi pour le mettre dans la barre
+        // d'items si necessaire !
         public boolean addItem(Item item) {
             Item minItem = getItemWithMinNb(item);
             if(minItem == null) {
                 if(items.size() == maxSlots)
                     return false;
                 items.add(item);
+                itemsBar.addItem(item);
                 return true;
             }
             int remainingBFull = minItem.remainingBeforeFull();
@@ -194,6 +200,10 @@ public class Player extends Entity {
                 minItem.add(item.getNb());
             }
             return true;
+        }
+
+        public ItemsBar getItemsBar() {
+            return itemsBar;
         }
 
     }
@@ -289,6 +299,10 @@ public class Player extends Entity {
 
     public PlayerAction getAction() {
         return action;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
     }
 
 }

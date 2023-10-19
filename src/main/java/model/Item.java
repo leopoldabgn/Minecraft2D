@@ -31,9 +31,9 @@ public class Item {
 
     protected void drawItem(Graphics2D g, int x, int y) {
         int size = ItemsBar.ITEM_SIZE, borderSize = 4;
-
+        
         // Un item vide a un attribut nb = 0
-        if(nb != 0) {
+        if(!isEmpty()) {
             Image img = Textures.loadItemTexture(texture);
             g.drawImage(img, x + borderSize, y + borderSize,
             size - borderSize*2, size - borderSize*2, null, null);
@@ -43,12 +43,10 @@ public class Item {
             g.setColor(EMPTY);
             g.fillRect(x + borderSize, y + borderSize, size - borderSize*2, size - borderSize*2);
         }
+
         if(isSelected) {
             g.setColor(new Color(0, 0, 0, 20));
             g.fillRect(x, y, size+borderSize*2, size+borderSize*2);
-        }
-
-        if(isSelected) {
             borderSize *= 2;
             g.setColor(ITEM_BORDER_SELECTED);
         }
@@ -107,11 +105,22 @@ public class Item {
         this.isSelected = selected;
     }
 
-
-
-    @Override
-    public boolean equals(Object obj) {
-        return ((Item)obj).texture.equals(texture);
+    public boolean isEmpty() {
+        return nb == 0;
     }
+
+    public void reset(Item item) {
+        this.texture = item.texture;
+        this.nb = item.nb;
+        this.maxStack = item.maxStack;
+        this.isSelected = item.isSelected;
+    }
+
+    // TODO: Corriger la methode equals, elle fonctionne mal
+    // La destruction de block ne fonctionne pas et remove le mauvais de la liste
+    // @Override
+    // public boolean equals(Object obj) {
+    //     return ((Item)obj).texture.equals(texture);
+    // }
 
 }

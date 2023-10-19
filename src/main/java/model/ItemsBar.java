@@ -20,6 +20,19 @@ public class ItemsBar {
         items.get(currentItem).setSelected(true);
     }
 
+    public boolean addItem(Item item) {
+        // Pour le moment on fait ca.
+        // Ensuite on fera en sorte de stacker les items
+        for(Item i : items) {
+            if(i.isEmpty()) {
+                i.reset(item);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void draw(Graphics2D g, int x, int y) {
         for(int i=0;i<NB_ITEMS;i++, x += ITEM_SIZE) {
             items.get(i).drawItem(g, x, y);

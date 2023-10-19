@@ -7,6 +7,7 @@ import model.Block;
 import model.Game;
 import model.Map;
 import model.Player;
+import model.Player.Inventory;
 import model.Player.PlayerAction;
 
 public class GameKeyListener extends KeyAdapter {
@@ -39,6 +40,7 @@ public class GameKeyListener extends KeyAdapter {
         return;
         Map map = game.getMap();
         Player p = game.getMainPlayer();
+        Inventory pInventory = p.getInventory();
         PlayerAction pAction = p.getAction();
         Block block = null;
 
@@ -66,8 +68,12 @@ public class GameKeyListener extends KeyAdapter {
                         }
                     }
                 }
-                if(block != null) // && have pickaxe ?
-                        map.removeBlock(block); // TODO: add block to player inventory
+                if(block != null) {// && have pickaxe ?
+                        Block b = map.removeBlock(block); // TODO: add block to player inventory
+                        if(b != null) {
+                            pInventory.addItem(b);
+                        }
+                }
                 break;
             case KeyEvent.VK_W: // Poser un block
                 if(System.currentTimeMillis() - startActionTime <= timeBetweenActions)

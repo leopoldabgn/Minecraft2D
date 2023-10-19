@@ -34,7 +34,7 @@ public class GameMouseListener extends MouseAdapter {
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         int rotation = e.getWheelRotation();
-        ItemsBar itemsBar = game.getItemsBar();
+        ItemsBar itemsBar = game.getPlayerItemsBar();
         // On utilise la valeur de rotation pour détecter si le défilement
         // est vers l'avant ou vers l'arrière
         if (rotation < 0) {
