@@ -10,7 +10,8 @@ import java.util.Random;
 public class Map {
 
     private Game game;
-    private ArrayList<Player> players, mobs;
+    private ArrayList<Player> players;
+    private ArrayList<Mob> mobs;
     private ArrayList<Block> blocks = new ArrayList<>();
     private int width  = 600,
                 height = 600;
@@ -69,7 +70,7 @@ public class Map {
 
         // On dessine les mobs
         if(mobs != null) {
-            for(Player m : mobs) {
+            for(Mob m : mobs) {
                 if(isOnScreen(m)) {
                     // System.out.println(m.getType());
                     m.draw(g, origin);
@@ -168,45 +169,45 @@ public class Map {
         return pushFromBlock(type, startBlock, 0, startBlock.getSize());
     }
 
-    public boolean isOnGround(Player p) {
-        Player p2 = p.weakClone();
-        p2.addToRealPosition(0, 1); // On descend de 1px
+    public boolean isOnGround(Mob m) {
+        Mob m2 = m.weakClone();
+        m2.addToRealPosition(0, 1); // On descend de 1px
         // Si le pixel d'en dessous correspond à un block
         // Alors on est bien sur le sol
-        if(isOnBlock(p2) != null)
+        if(isOnBlock(m2) != null)
             return true;
         return false;
     }
 
-    public Block getBlockLeft(Player p, int distance) {
-        return getBlockRight(p, -distance);
+    public Block getBlockLeft(Mob m, int distance) {
+        return getBlockRight(m, -distance);
     }
 
-    public Block getBlockRight(Player p, int distance) {
-        return getBlock(distance, 0, p);
+    public Block getBlockRight(Mob m, int distance) {
+        return getBlock(distance, 0, m);
     }
 
-    public Block getBlockAbove(Player p, int distance) {
-        return getBlockBelow(p, -distance);
+    public Block getBlockAbove(Mob m, int distance) {
+        return getBlockBelow(m, -distance);
     }
 
-    public Block getBlockBelow(Player p, int distance) {
-        return getBlock(0, distance, p);
+    public Block getBlockBelow(Mob m, int distance) {
+        return getBlock(0, distance, m);
     }
 
-    public Block getBlock(int addX, int addY, Player p) {
-        Player p2 = p.weakClone();
-        p2.addToPosition(addX, addY);
+    public Block getBlock(int addX, int addY, Mob m) {
+        Mob m2 = m.weakClone();
+        m2.addToPosition(addX, addY);
 
-        Block b = isOnBlock(p2);
+        Block b = isOnBlock(m2);
         if(b != null)
             return b;
         return null;
     }
 
-    public Block isOnBlock(Player player) {
+    public Block isOnBlock(Mob m) {
         for(Block b : blocks) {
-            if(b.isOnMe(player))
+            if(b.isOnMe(m))
                 return b;
         }
         return null;
@@ -220,11 +221,11 @@ public class Map {
         return null;
     }
 
-    public boolean isOut(Player p) {
-        int x1 = p.getRealX(),
-        x2 = x1 + p.getSize() - 1,
-        y1 = p.getRealY(),
-        y2 = y1 + p.getSize() - 1;
+    public boolean isOut(Mob m) {
+        int x1 = m.getRealX(),
+        x2 = x1 + m.getSize() - 1,
+        y1 = m.getRealY(),
+        y2 = y1 + m.getSize() - 1;
 
         return isOut(x1, y1) && isOut(x1, y2) && isOut(x2, y1) && isOut(x2, y2);
     }
@@ -235,50 +236,50 @@ public class Map {
         return !(x >= orx && x <= orx + width && y >= ory && y <= ory + height);
     }
 
-    public boolean canMovePlayer(Player player, int addX, int addY) {
+    public boolean canMoveMob(Mob mob, int addX, int addY) {
         // On crée un clone de joueur pour tester si on peut bouger le joueur
-        Player p2 = player.weakClone();
-        p2.addToRealPosition(addX, addY);
-        if(isOut(p2)) {
-            // System.err.println("Player at x:"+x+" , y:"+y+" is out of map ! Cannot move player.");
+        Mob m2 = mob.weakClone();
+        m2.addToRealPosition(addX, addY);
+        if(isOut(m2)) {
+            // System.err.println("Mob at x:"+x+" , y:"+y+" is out of map ! Cannot move Mob.");
             return false;
         }
-        if(isOnBlock(p2) != null) {
-            // System.err.println("x:"+x+" , y:"+y+" is on a block ! Cannot move player.");
+        if(isOnBlock(m2) != null) {
+            // System.err.println("x:"+x+" , y:"+y+" is on a block ! Cannot move Mob.");
             return false;
         }
         return true;
     }
 
-    public void startFalling(Player p) {
-        if(p.isFalling())
+    public void startFalling(Mob m) {
+        if(m.isFalling())
             return;
-        p.setFalling(true);
+        m.setFalling(true);
         new Thread(() -> {
-            p.setVelY(1);
-            while(!isOnGround(p))
+            m.setVelY(1);
+            while(!isOnGround(m))
                 ;
-            p.setVelY(0);
-            p.setFalling(false);
+            m.setVelY(0);
+            m.setFalling(false);
         }).start();
     }
 
-    public void startJumping(Player p) {
-        if(p.isJumping())
+    public void startJumping(Mob m) {
+        if(m.isJumping())
             return;
-        p.setJumping(true);
+        m.setJumping(true);
         new Thread(() -> {
-            p.setVelY(-1);
-            for(int i=0;i<Entity.DEFAULT_BLOCK_SIZE * 3f;i++) {
+            m.setVelY(-1);
+            for(int i=0;i<Entity.DEFAULT_BLOCK_SIZE * 2f;i++) {
                 try {
-                    Thread.sleep(Player.DELAY_MOVE);
+                    Thread.sleep(Mob.DELAY_MOVE);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            p.setVelY(0);
-            p.setJumping(false);
-            p.getAction().setPreviousAction();
+            m.setVelY(0);
+            m.setJumping(false);
+            m.getAction().setPreviousAction();
         }).start();
     }
 

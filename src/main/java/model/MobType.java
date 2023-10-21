@@ -1,12 +1,15 @@
 package model;
 
-public enum PlayerType {
+public enum MobType {
 
-    STEVE("steve");
+    PLAYER("player"),
+
+    // Mobs
+    PIG("pig");
 
     private String type;
 
-    private PlayerType(String type) {
+    private MobType(String type) {
         this.type = type;
     }
 

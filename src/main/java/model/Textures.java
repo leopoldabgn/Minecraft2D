@@ -10,12 +10,14 @@ public class Textures {
     
     private static String BLOCKS = "blocks/",
                           PLAYERS = "players/",
+                          MOBS = "mobs/",
                           BACKGROUND = "background/",
                           EXT_FILE = ".png";
 
     private static Image DEFAULT_TEXTURE;
 
     private static HashMap<String, Image> PLAYER_TEXTURES = new HashMap<>();
+    private static HashMap<String, Image> MOB_TEXTURES = new HashMap<>();
     private static HashMap<String, Image> BLOCK_TEXTURES = new HashMap<>();
     private static HashMap<String, Image> BACKGROUND_TEXTURES = new HashMap<>();
 
@@ -52,6 +54,22 @@ public class Textures {
                 img = DEFAULT_TEXTURE;
             }
             BLOCK_TEXTURES.put(texture, img);
+        }
+        return img;
+    }
+
+    // Fonctionne pareil que loadBlockTexture
+    public static Image loadMobTexture(MobType mobType, String texture) {
+        texture = mobType.getType()+"/"+texture;
+        Image img = MOB_TEXTURES.get(texture);
+        if(img == null) {
+            try {
+                img = App.getImage(MOBS+texture+EXT_FILE);
+            } catch (IOException e) {
+                System.err.println("Erreur ouverture image: "+MOBS+texture+EXT_FILE);
+                img = DEFAULT_TEXTURE;
+            }
+            MOB_TEXTURES.put(texture, img);
         }
         return img;
     }

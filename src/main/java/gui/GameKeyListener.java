@@ -7,8 +7,8 @@ import model.Block;
 import model.Game;
 import model.Map;
 import model.Player;
+import model.Mob.MobAction;
 import model.Player.Inventory;
-import model.Player.PlayerAction;
 
 public class GameKeyListener extends KeyAdapter {
     
@@ -41,7 +41,7 @@ public class GameKeyListener extends KeyAdapter {
         Map map = game.getMap();
         Player p = game.getMainPlayer();
         Inventory pInventory = p.getInventory();
-        PlayerAction pAction = p.getAction();
+        MobAction pAction = p.getAction();
         Block block = null;
 
         switch(keyCode) {
@@ -137,7 +137,7 @@ public class GameKeyListener extends KeyAdapter {
         if(gameView == null || game == null)
             return;
         Player p = game.getMainPlayer();
-        PlayerAction pAction = p.getAction();
+        MobAction pAction = p.getAction();
 
         switch(keyCode) {
             case KeyEvent.VK_SPACE:

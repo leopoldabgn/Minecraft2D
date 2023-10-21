@@ -1,24 +1,21 @@
 package model;
 
+import java.awt.Point;
 import java.util.ArrayList;
 
 public class Game {
     
     private ArrayList<Player> players = new ArrayList<>();
-    private ArrayList<Player> mobs = new ArrayList<>(); // -----------
+    private ArrayList<Mob> mobs = new ArrayList<>(); // -----------
     private Player mainPlayer;
     private Map map;
     
 
     public Game(Player player, int mapWidth, int mapHeight) {
         this.mainPlayer = player;
-        players.add(player);
+        players.add(player); // Ajout d'un joueur
+        mobs.add(Mob.createMob(MobType.PIG, new Point(-5, -10))); // Ajout d'un mob
         this.map = MapGenerator.underground(this, mapWidth, mapHeight);
-        // ---------------------------------------------------------------
-        Player pig = Player.createPlayer(PlayerType.PIG, "pig");
-        mobs.add(pig);
-        System.out.println(pig.getType());
-        // ---------------------------------------------------------------
     }
 
     public Game(ArrayList<Player> players, int mapWidth, int mapHeight) {
@@ -43,8 +40,7 @@ public class Game {
         return players;
     }
 
-    // -----------------------------------
-    public ArrayList<Player> getMobs() {
+    public ArrayList<Mob> getMobs() {
         return mobs;
     }
 
