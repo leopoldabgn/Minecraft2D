@@ -5,13 +5,20 @@ import java.util.ArrayList;
 public class Game {
     
     private ArrayList<Player> players = new ArrayList<>();
+    private ArrayList<Player> mobs = new ArrayList<>(); // -----------
     private Player mainPlayer;
     private Map map;
+    
 
     public Game(Player player, int mapWidth, int mapHeight) {
         this.mainPlayer = player;
         players.add(player);
         this.map = MapGenerator.underground(this, mapWidth, mapHeight);
+        // ---------------------------------------------------------------
+        Player pig = Player.createPlayer(PlayerType.PIG, "pig");
+        mobs.add(pig);
+        System.out.println(pig.getType());
+        // ---------------------------------------------------------------
     }
 
     public Game(ArrayList<Player> players, int mapWidth, int mapHeight) {
@@ -34,6 +41,11 @@ public class Game {
 
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    // -----------------------------------
+    public ArrayList<Player> getMobs() {
+        return mobs;
     }
 
     public ItemsBar getPlayerItemsBar() {

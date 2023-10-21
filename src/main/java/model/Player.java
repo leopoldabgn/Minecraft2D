@@ -24,6 +24,7 @@ public class Player extends Entity {
 
     private Player(PlayerType type, String pseudo, Point position) {
         super(type.getType(), 1, position);
+        this.type = type;
         this.pseudo = pseudo;
         this.action = new PlayerAction(new Action("walk_left", 4),
                                        new Action("walk_right", 4),
@@ -303,6 +304,10 @@ public class Player extends Entity {
 
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public PlayerType getType() {
+        return type;
     }
 
 }

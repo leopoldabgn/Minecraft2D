@@ -10,7 +10,7 @@ import java.util.Random;
 public class Map {
 
     private Game game;
-    private ArrayList<Player> players;
+    private ArrayList<Player> players, mobs;
     private ArrayList<Block> blocks = new ArrayList<>();
     private int width  = 600,
                 height = 600;
@@ -25,6 +25,7 @@ public class Map {
         this.width = width;
         this.height = height;
         this.players = game.getPlayers();
+        this.mobs = game.getMobs();
     }
 
     public static Map empty(Game game, int width, int height) {
@@ -65,6 +66,17 @@ public class Map {
                     p.draw(g, origin);
             }
         }
+
+        // On dessine les mobs
+        if(mobs != null) {
+            for(Player m : mobs) {
+                if(isOnScreen(m)) {
+                    // System.out.println(m.getType());
+                    m.draw(g, origin);
+                }
+            }
+        }
+
     }
 
     public void pushLayer(Map map, BlockType bType, int y) {
@@ -257,7 +269,7 @@ public class Map {
         p.setJumping(true);
         new Thread(() -> {
             p.setVelY(-1);
-            for(int i=0;i<Entity.DEFAULT_BLOCK_SIZE * 1.5f;i++) {
+            for(int i=0;i<Entity.DEFAULT_BLOCK_SIZE * 3f;i++) {
                 try {
                     Thread.sleep(Player.DELAY_MOVE);
                 } catch (InterruptedException e) {

@@ -1,7 +1,8 @@
 package model;
 
 public enum PlayerType {
-    STEVE("steve");
+    STEVE("steve"),
+    PIG("pig");
 
     private String type;
 

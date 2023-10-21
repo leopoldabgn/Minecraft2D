@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -64,7 +63,27 @@ public class GameView extends JPanel implements ActionListener {
             // Launch Thread
             map.startFalling(p);
         }
+        
+        // ArrayList<Player> mobs = game.getMobs();
 
+        // for(Player m : mobs) {
+        //     movedPlayer = false;
+
+        //     if(map.canMovePlayer(m, m.getVelX(), m.getVelY())) {
+        //         movedPlayer = m.move();
+        //     }
+        //     else if(m.getVelX() != 0 && m.getVelY() != 0) {
+        //         if(map.canMovePlayer(m, 0, m.getVelY()))
+        //             movedPlayer = m.move(true, false); // On interdit d'avancer sur x
+        //         else if(map.canMovePlayer(m, m.getVelX(), 0))
+        //             movedPlayer = m.move(false, true);
+        //     }
+
+        //     if(!m.isJumping() && !m.isFalling() && !map.isOnGround(m)) {
+        //         // Launch Thread
+        //         map.startFalling(m);
+        //     }
+        // }
 
         mapView.repaint();
     }
