@@ -2,8 +2,11 @@ package model;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
+
+import launcher.App;
 
 public class Item {
 
@@ -31,12 +34,26 @@ public class Item {
 
     protected void drawItem(Graphics2D g, int x, int y) {
         int size = ItemsBar.ITEM_SIZE, borderSize = 4;
+        String nbStr = getNb()+"";
         
         // Un item vide a un attribut nb = 0
         if(!isEmpty()) {
+            // On dessine la texture de l'item
             Image img = Textures.loadItemTexture(texture);
             g.drawImage(img, x + borderSize, y + borderSize,
             size - borderSize*2, size - borderSize*2, null, null);
+
+            // On dessine le nombre d'element stacké
+            g.setColor(Color.WHITE);
+            Font font = new Font("default", Font.BOLD, 26);
+            g.setFont(font);
+
+            // On récupere la taille en pixels largeur/hauteur
+            int[] strLength = App.getStringLength(g, font, nbStr);
+            int posX = x + size - borderSize - strLength[0];
+            int posY = y + size - borderSize - 0;
+
+            g.drawString(nbStr, posX, posY);
         }
         else {
             // Si pas d'image
@@ -60,6 +77,10 @@ public class Item {
     public void setTexture(String texture) {
         this.texture = texture;
         nb = texture == null ? 0 : 1;
+    }
+
+    public String getTexture() {
+        return texture;
     }
 
     public int getNb() {

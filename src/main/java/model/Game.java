@@ -1,6 +1,5 @@
 package model;
 
-import java.awt.Point;
 import java.util.ArrayList;
 
 public class Game {
@@ -14,7 +13,9 @@ public class Game {
     public Game(Player player, int mapWidth, int mapHeight) {
         this.mainPlayer = player;
         players.add(player); // Ajout d'un joueur
-        mobs.add(Mob.createMob(MobType.PIG, new Point(-5, -10))); // Ajout d'un mob
+        //////
+        // mobs.add(Mob.createMob(MobType.PIG, new Point(-5, -10))); // Ajout d'un mob
+        //////
         this.map = MapGenerator.underground(this, mapWidth, mapHeight);
     }
 

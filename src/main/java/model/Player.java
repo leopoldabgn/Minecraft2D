@@ -36,7 +36,7 @@ public class Player extends Mob {
         public Item getItemWithMinNb(Item item) {
             Item minItem = null;
             for(Item it : items) {
-                if(item.equals(it)) {
+                if(item.getTexture().equals(it.getTexture())) {
                     if(minItem == null || it.getNb() < minItem.getNb())
                         minItem = it;
                 }
@@ -49,7 +49,7 @@ public class Player extends Mob {
         // d'items si necessaire !
         public boolean addItem(Item item) {
             Item minItem = getItemWithMinNb(item);
-            if(minItem == null) {
+            if(minItem == null || minItem.remainingBeforeFull() <= 0) {
                 if(items.size() == maxSlots)
                     return false;
                 items.add(item);
@@ -64,7 +64,7 @@ public class Player extends Mob {
             // Si il reste un nombre > 0 d'items a ajouter, on ajoute un nouvel
             // objet Item a la liste
             if(item.getNb() > 0) {
-                minItem.add(item.getNb());
+                addItem(item);
             }
             return true;
         }

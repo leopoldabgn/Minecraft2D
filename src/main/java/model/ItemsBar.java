@@ -21,15 +21,13 @@ public class ItemsBar {
     }
 
     public boolean addItem(Item item) {
-        // Pour le moment on fait ca.
-        // Ensuite on fera en sorte de stacker les items
-        for(Item i : items) {
-            if(i.isEmpty()) {
-                i.reset(item);
+        for (int index = 0; index < items.size(); index++) {
+            Item i = items.get(index);
+            if (i.isEmpty()) {
+                items.set(index, item);
                 return true;
             }
         }
-
         return false;
     }
 
