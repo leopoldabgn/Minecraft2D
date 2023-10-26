@@ -19,6 +19,8 @@ public class GameKeyListener extends KeyAdapter {
 
     private long timeBetweenActions = 350,
                 startActionTime;
+    
+    private boolean isUpPressed;
 
     public GameKeyListener(GameView gameView, Game game) {
         this.gameView = gameView;
@@ -60,11 +62,16 @@ public class GameKeyListener extends KeyAdapter {
                 else {
                     int maxDist = 2;
                     for(int i=0;block == null && i < maxDist;i++) {
-                        if(pAction.isWalkingRight()) {
-                            block = map.getBlockRight(p, i);
+                        if(isUpPressed) {
+                            block = map.getBlockAbove(p, i);
                         }
-                        else if(pAction.isWalkingLeft()) {
-                            block = map.getBlockLeft(p, i);
+                        else {
+                            if(pAction.isWalkingRight()) {
+                                block = map.getBlockRight(p, i);
+                            }
+                            else if(pAction.isWalkingLeft()) {
+                                block = map.getBlockLeft(p, i);
+                            }
                         }
                     }
                 }
@@ -100,12 +107,16 @@ public class GameKeyListener extends KeyAdapter {
                 // if(block != null) // && have pickaxe ?
                 //         map.addBlock(Block.GRASS, x, y....); // TODO: remove block from player inventory
                 break;
-            case KeyEvent.VK_SPACE:
             case KeyEvent.VK_UP:
+                isUpPressed = true;
+            case KeyEvent.VK_SPACE:
                 if(map.isOnGround(p) && !p.isJumping()) {
                     pAction.setJumping(pAction.isWalkingLeft());
                     map.startJumping(p);
                 }
+                break;
+            case KeyEvent.VK_Z:
+                isUpPressed = true;
                 break;
             case KeyEvent.VK_D:
             case KeyEvent.VK_RIGHT:
@@ -140,8 +151,12 @@ public class GameKeyListener extends KeyAdapter {
         MobAction pAction = p.getAction();
 
         switch(keyCode) {
-            case KeyEvent.VK_SPACE:
+            case KeyEvent.VK_Z:
+                isUpPressed = false;
+                break;
             case KeyEvent.VK_UP:
+                isUpPressed = false;
+            case KeyEvent.VK_SPACE:
                 // TODO ?
                 break;
             case KeyEvent.VK_D:
