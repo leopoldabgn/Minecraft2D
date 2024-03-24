@@ -6,19 +6,20 @@ import java.awt.Image;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Map {
 
     private Game game;
     private ArrayList<Player> players;
     private ArrayList<Mob> mobs;
-    private ArrayList<Block> blocks = new ArrayList<>();
+    private CopyOnWriteArrayList<Block> blocks = new CopyOnWriteArrayList<>();
     private int width  = 600,
                 height = 600;
 
     private Point origin = new Point(0, 0);
 
-    private static int[] BOUND_MAP_X = new int[] {-1000, 1000}, // 2000 blocs de large
+    private static int[] BOUND_MAP_X = new int[] {-100, 100}, // 2000 blocs de large
                          BOUND_MAP_Y = new int[] {-320, 100};
 
     private Map(Game game, int width, int height) {
@@ -118,13 +119,18 @@ public class Map {
     // Le block peut ensuite etre stocké dans l'inventaire du joueur
     // par exemple
     public Block removeBlock(int x, int y) {
+        Block blockToRemove = null;
         for(Block b : blocks) {
             if(b.getX() == x && b.getY() == y) {
-                blocks.remove(b);
-                return b;
+                blockToRemove = b;
+                break;
             }
         }
-        return null;
+        
+        if(blockToRemove != null)
+            blocks.remove(blockToRemove);
+
+        return blockToRemove;
     }
 
     public Block removeBlock(Block block) {
