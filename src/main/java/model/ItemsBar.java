@@ -1,10 +1,13 @@
 package model;
 
 import java.awt.Graphics2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ItemsBar {
+public class ItemsBar implements Serializable {
     
+    private static final long serialVersionUID = 123123123L;
+
     private ArrayList<Item> items = new ArrayList<>();
     public static int ITEM_SIZE = 65,
                       NB_ITEMS = 9,

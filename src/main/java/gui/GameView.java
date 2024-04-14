@@ -54,7 +54,7 @@ public class GameView extends JPanel implements ActionListener {
             map.startFalling(m);
         }
 
-        // Si le joueur a bougé, on deplace la carte avec lui pour le garder au center
+        // Si le joueur a bougé, on deplace la carte avec lui pour le garder au centre
         if(movedMob && m == game.getMainPlayer()) {
             int midPlayerX = (map.getWidth() / 2)  - (m.getSize() / 2);
             int midPlayerY = (map.getHeight() / 2) - (m.getSize() / 2);

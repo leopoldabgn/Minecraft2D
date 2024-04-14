@@ -5,10 +5,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.io.Serializable;
 
 import launcher.App;
 
-public class Item {
+public class Item implements Serializable {
+
+    private static final long serialVersionUID = 222222L;
 
     public static Color ITEM_BORDER = new Color(120, 130, 140);
     public static Color ITEM_BORDER_SELECTED = new Color(180, 180, 180);

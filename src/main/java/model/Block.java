@@ -6,6 +6,8 @@ import java.awt.Point;
 
 public class Block extends Entity {
 
+    private static final long serialVersionUID = 333333L;
+
     private BlockType type;
 
     private Block(BlockType type, int x, int y) {

@@ -6,6 +6,8 @@ import java.awt.Point;
 
 public class Entity extends Item {
     
+    private static final long serialVersionUID = 44444L;
+
     protected Point position = new Point(0, 0);
 
     public static int DEFAULT_BLOCK_SIZE = 50;

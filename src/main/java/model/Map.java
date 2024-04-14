@@ -4,11 +4,14 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Map {
+public class Map implements Serializable {
+
+    private static final long serialVersionUID = 432143214321L;
 
     private Game game;
     private ArrayList<Player> players;

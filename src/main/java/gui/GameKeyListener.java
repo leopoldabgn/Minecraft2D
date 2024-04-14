@@ -49,8 +49,9 @@ public class GameKeyListener extends KeyAdapter {
         switch(keyCode) {
             case KeyEvent.VK_ESCAPE:
                 // TODO: Open settings page
-                Window.currentWindow.dispose();
-                System.exit(0);
+
+                // Pour le moment, on sauvegarde la partie et stoppe l'execution
+                Window.currentWindow.saveAndQuit();
             case KeyEvent.VK_S: // Detruire un block
                 if(System.currentTimeMillis() - startActionTime <= timeBetweenActions)
                     return;

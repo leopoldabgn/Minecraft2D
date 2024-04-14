@@ -50,8 +50,11 @@ public class Window extends JFrame {
 		setDefaultLookAndFeelDecorated(true);
 
 
-		Game game = new Game(Player.createPlayer(PlayerType.STEVE, "leopold"), width, height);
-		// System.out.println(game);
+		game = Game.loadLastGame();
+
+		if(game == null) {
+			game = new Game(Player.createPlayer(PlayerType.STEVE, "leopold"), width, height);
+		}
 
 		setGameView(game);
 
@@ -115,7 +118,7 @@ public class Window extends JFrame {
 
             @Override
             public void windowClosing(WindowEvent e) {
-				System.exit(0);
+				saveAndQuit();
             }
         });
 
@@ -160,6 +163,17 @@ public class Window extends JFrame {
 
 		this.getContentPane().add(lastPanel);
 		refreshWindow();
+	}
+
+	public void saveAndQuit() {
+		// On ferma la fenetre
+		Window.currentWindow.dispose();
+		// On sauvegarde la partie en cours dans un fichier
+		if(game != null) {
+			game.saveLastGame();
+		}
+		// On stoppe l'execution du jeu
+		System.exit(0);
 	}
 
 }

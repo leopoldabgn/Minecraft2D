@@ -3,10 +3,13 @@ package model;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Mob extends Entity {
     
+    private static final long serialVersionUID = 666666L;
+
     private MobType type = MobType.PIG;
     private MobAction action;
     private Point velocity = new Point(0, 0); // rapidite
@@ -38,7 +41,9 @@ public class Mob extends Entity {
         return new Mob(type, position);
     }
 
-    public class MobAction {
+    public class MobAction implements Serializable {
+
+        private static final long serialVersionUID = 888888L;
 
         private Action WALK_LEFT, WALK_RIGHT, JUMP_LEFT, JUMP_RIGHT, SNEAK;
         private Action currentAction, prevAction;
@@ -122,7 +127,10 @@ public class Mob extends Entity {
 
     }
 
-    public static class Action {
+    public static class Action implements Serializable {
+
+        private static final long serialVersionUID = 999999L;
+
         private String nom;
         private int progress = 1, maxTextures = 1;
 
@@ -156,6 +164,7 @@ public class Mob extends Entity {
     
     }
 
+    // TODO: A supprimer ? Ou pas ? A voir...
     public static class Inventory {
         private ArrayList<Item> items = new ArrayList<>();
         private int maxSlots = 9; // Pour l'instant juste le nombre de slots de la barre d'items
@@ -300,6 +309,13 @@ public class Mob extends Entity {
 
     public MobType getMobType() {
         return type;
+    }
+
+    public void resetMobVelocity() {
+        setVelX(0);
+        setVelY(0);
+        setJumping(false);
+        setFalling(false);
     }
 
 }
