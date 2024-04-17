@@ -38,35 +38,6 @@ public class GameView extends JPanel implements ActionListener {
         return mapView;
     }
 
-    public void refreshMob(Map map, Mob m) {
-        boolean movedMob = false;
-
-        if (map.canMoveMob(m, m.getVelX(), m.getVelY())) {
-            movedMob = m.move();
-        } else if (m.getVelX() != 0 && m.getVelY() != 0) {
-            if (map.canMoveMob(m, 0, m.getVelY()))
-                movedMob = m.move(true, false); // On interdit d'avancer sur x
-            else if (map.canMoveMob(m, m.getVelX(), 0))
-                movedMob = m.move(false, true);
-        }
-
-        if (!m.isJumping() && !m.isFalling() && !map.isOnGround(m)) {
-            map.startFalling(m);
-        }
-
-        // Si le joueur a bougé, on deplace la carte avec lui pour le garder au centre
-        if(movedMob && m == game.getMainPlayer()) {
-            int midPlayerX = (map.getWidth() / 2)  - (m.getSize() / 2);
-            int midPlayerY = (map.getHeight() / 2) - (m.getSize() / 2);
-            int mapX = m.getRealX() - midPlayerX;
-            int mapY = m.getRealY() - midPlayerY;
-            map.moveOrigin(mapX, mapY);
-            // On rafraichit la texture par exemple si il marche
-            m.refreshActionTexture();
-        }
-
-    }
-
     private final Random random = new Random();
     private final java.util.Timer mobMoveTimer = new java.util.Timer();
 
@@ -108,13 +79,34 @@ public class GameView extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent action) {
         Map map = game.getMap();
 
+        // Selon la velocité en Y et en X, on effectue
+        // les mouvements possibles pour les joueurs/mobs
+
+        boolean mainPlayermoved = false;
+        Player mainPlayer = game.getMainPlayer();
+
         // On met a jour les joueurs
-        for(Player p : game.getPlayers())
-            refreshMob(map, p);
+        for(Player p : game.getPlayers()) {
+            if(p == mainPlayer)
+                mainPlayermoved = p.update(map);// If isOnScreen() ?? TODO
+            else
+                p.update(map);
+        }
         
         // On met a jour les mobs
         for(Mob m : game.getMobs())
-            refreshMob(map, m); // If isOnScreen() ??
+            m.update(map); // If isOnScreen() ?? TODO
+
+        // Si le joueur a bougé, on deplace la carte avec lui pour le garder au centre
+        if(mainPlayermoved) {
+            int midPlayerX = (map.getWidth() / 2)  - (mainPlayer.getSize() / 2);
+            int midPlayerY = (map.getHeight() / 2) - (mainPlayer.getSize() / 2);
+            int mapX = mainPlayer.getRealX() - midPlayerX;
+            int mapY = mainPlayer.getRealY() - midPlayerY;
+            map.moveOrigin(mapX, mapY);
+            // On rafraichit la texture par exemple si il marche
+            mainPlayer.refreshActionTexture();
+        }
 
         // On rafraichit l'affichage
         mapView.repaint();

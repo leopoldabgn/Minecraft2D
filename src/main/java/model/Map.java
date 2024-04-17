@@ -245,7 +245,22 @@ public class Map implements Serializable {
         return !(x >= orx && x <= orx + width && y >= ory && y <= ory + height);
     }
 
-    public boolean canMoveMob(Mob mob, int addX, int addY) {
+    public boolean canMoveMob(Mob mob, int x, int y) {
+        // On crée un clone de joueur pour tester si on peut bouger le joueur
+        Mob m2 = mob.weakClone();
+        m2.setRealPosition(x, y);
+        if(isOut(m2)) {
+            // System.err.println("Mob at x:"+x+" , y:"+y+" is out of map ! Cannot move Mob.");
+            return false;
+        }
+        if(isOnBlock(m2) != null) {
+            // System.err.println("x:"+x+" , y:"+y+" is on a block ! Cannot move Mob.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean canMoveMobAdd(Mob mob, int addX, int addY) {
         // On crée un clone de joueur pour tester si on peut bouger le joueur
         Mob m2 = mob.weakClone();
         m2.addToRealPosition(addX, addY);
@@ -260,36 +275,39 @@ public class Map implements Serializable {
         return true;
     }
 
+    // Set falling to true for the mob
     public void startFalling(Mob m) {
         if(m.isFalling())
             return;
         m.setFalling(true);
-        new Thread(() -> {
-            m.setVelY(1);
-            while(!isOnGround(m))
-                ;
-            m.setVelY(0);
-            m.setFalling(false);
-        }).start();
+        // new Thread(() -> {
+        //     m.setVelY(1);
+        //     while(!isOnGround(m))
+        //         ;
+        //     m.setVelY(0);
+        //     m.setFalling(false);
+        // }).start();
     }
 
+    // TODO: Faire disparaitre cette fonction
+    // Set jumping to true
     public void startJumping(Mob m) {
         if(m.isJumping())
             return;
         m.setJumping(true);
-        new Thread(() -> {
-            m.setVelY(-1);
-            for(int i=0;i<Entity.DEFAULT_BLOCK_SIZE * 2f;i++) {
-                try {
-                    Thread.sleep(Mob.DELAY_MOVE);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            m.setVelY(0);
-            m.setJumping(false);
-            m.getAction().setPreviousAction();
-        }).start();
+        // new Thread(() -> {
+        //     m.setVelY(-1);
+        //     for(int i=0;i<Entity.DEFAULT_BLOCK_SIZE * 2f;i++) {
+        //         try {
+        //             Thread.sleep(Mob.DELAY_MOVE);
+        //         } catch (InterruptedException e) {
+        //             e.printStackTrace();
+        //         }
+        //     }
+        //     m.setVelY(0);
+        //     m.setJumping(false);
+        //     m.getAction().setPreviousAction();
+        // }).start();
     }
 
     public int getWidth() {

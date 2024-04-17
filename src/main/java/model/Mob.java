@@ -16,9 +16,16 @@ public class Mob extends Entity {
  
     private boolean isFalling, isJumping;
 
-    private long lastTimeMove, lastTimeAction;
-    public static long DELAY_MOVE = 3; // 3ms
-    public static long DELAY_ACTION = 50;
+    private int moveStartY;
+    private long lastTimeMove, lastTimeAction, moveStartTime;
+
+    public static long DELAY_MOVE = 0; // 3ms - TODO: A supprimer ?
+    public static long DELAY_ACTION = 50; // 50ms
+
+    // FALL speed est aussi basé sur JUMP_DELAY et JUMP_HEIGHT
+    public static long JUMP_DELAY = 200; // 300ms
+    public static long JUMP_HEIGHT = (int)(Entity.DEFAULT_BLOCK_SIZE * 1.7f); // Hauteur d'un saut
+    public static float JUMP_FRICTION = 0.9f;
 
     private Mob() {}
 
@@ -226,13 +233,98 @@ public class Mob extends Entity {
         g.drawImage(img, x, y, getSize(), getSize(), null);
     }
 
-    public boolean move() {
-        return move(false, false);
+    public boolean update(Map map) {
+        int x = getRealX() + getVelX(),
+            y = getRealY();
+
+        if(isFalling()) {
+            long elapsedTime = System.currentTimeMillis() - moveStartTime;
+            int deltaY = getDistanceProgress(elapsedTime, JUMP_HEIGHT, JUMP_DELAY);
+            y = moveStartY + deltaY;
+        }
+        else if(isJumping()) {
+            long elapsedTime = System.currentTimeMillis() - moveStartTime;
+            int deltaY = getDistanceProgress(elapsedTime, JUMP_HEIGHT, JUMP_DELAY);
+
+            // System.out.println(y+" "+deltaY+" "+jumpStartY+" "+(jumpStartY-deltaY)+" "+elapsedTime);
+
+            y = moveStartY - deltaY;
+            
+            // Appliquer la friction à la vélocité de saut
+            // setVelY((int)(getVelY() * JUMP_FRICTION));
+
+            // Ajuster la vélocité de Y pour simuler le saut
+            // setVelY(getVelY() - deltaY);
+
+            // Vérifier si le mob doit cesser de sauter
+            if(elapsedTime >= JUMP_DELAY) {
+                setJumping(false); // Le saut est terminé après JUMP_DELAY ms
+            }
+
+            // System.out.println(elapsedTime+" "+deltaY+" "+getVelY());
+        }
+
+        boolean movedMobX = false, movedMobY = false;
+
+        if(map.canMoveMob(this, x, y)) {
+            movedMobX = move(x, y);
+            movedMobY = movedMobX;
+        }
+        else if(x != getRealX() && y != getRealY()) {
+            if (map.canMoveMob(this, getRealX(), y))
+                movedMobY = move(getRealX(), y); // On interdit d'avancer sur x
+            else if (map.canMoveMob(this, x, getRealY()))
+                movedMobX = move(x, getRealY());
+        }
+
+        // Un bloc semble bloquer le mouvement du joueur
+        if(isFalling()) {
+            if(!movedMobY && y != getRealY())
+                setFalling(false);
+        }
+        else if(isJumping()) {
+            if(!movedMobY && y != getRealY()) {
+                setJumping(false);
+            }
+        }
+
+        if(!isJumping() && !isFalling() && !map.isOnGround(this)) {
+            map.startFalling(this);
+        }
+
+        return movedMobX || movedMobY;
     }
 
-    public boolean move(boolean restrictX, boolean restrictY) {
+    // Calculer la distance de saut en fonction du temps écoulé
+    private int getDistanceProgress(long elapsedTime, long distance, long delay) {
+        double normalizedTime = (double) elapsedTime / delay; // Coefficient temps écoulé / temps total
+        double distProgress = normalizedTime * distance;
+        return (int)distProgress;
+    }
+
+    // public boolean move() {
+    //     return move(false, false);
+    // }
+
+    public boolean move(int realX, int realY) {
+        if(realX == getRealX() && realY == getRealY())
+            return false;
+        // TODO: Attention, ça peut poser des problèmes pour la friction d'un jump ?
+        // Peut etre qu'il vaut mieux mettre ça dans la fonction update !!!
+        if(System.currentTimeMillis() - lastTimeMove >= Mob.DELAY_MOVE) {
+            setRealPosition(realX, realY);
+            lastTimeMove = System.currentTimeMillis();
+            return true;
+        }
+        return false;
+    }
+
+    // Old Method
+    public boolean moveWithVelocity(boolean restrictX, boolean restrictY) {
         if(velocity.getX() == 0 && velocity.getY() == 0)
             return false;
+        // TODO: Attention, ça peut poser des problèmes pour la friction d'un jump ?
+        // Peut etre qu'il vaut mieux mettre ça dans la fonction update !!!
         if(System.currentTimeMillis() - lastTimeMove >= Mob.DELAY_MOVE) {
             addToRealPosition(restrictX ? 0 : getVelX(),
                           restrictY ? 0 : getVelY());
@@ -280,7 +372,13 @@ public class Mob extends Entity {
     }
 
     public void setFalling(boolean isFalling) {
+        if(isFalling && isJumping())
+            return;
         this.isFalling = isFalling;
+        if(isFalling) {
+            moveStartTime = System.currentTimeMillis();
+            moveStartY = getRealY();
+        }
     }
 
     public boolean isFalling() {
@@ -288,7 +386,15 @@ public class Mob extends Entity {
     }
 
     public void setJumping(boolean isJumping) {
+        if(isJumping && isFalling())
+            return;
         this.isJumping = isJumping;
+        if(isJumping) {
+            moveStartTime = System.currentTimeMillis();
+            moveStartY = getRealY();
+        }
+        else
+            action.setPreviousAction();
     }
 
     public boolean isJumping() {
