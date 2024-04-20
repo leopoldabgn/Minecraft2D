@@ -53,14 +53,14 @@ public class GameView extends JPanel implements ActionListener {
                     if (random.nextBoolean()) {
                         // Définir un mouvement aléatoire
                         int velX = random.nextInt(3) - 1; // -1, 0, ou 1
-                        
-                        mob.setVelX(velX);
-                        if(velX != 0)
+
+                        if(velX != 0) {
+                            mob.setWalking(velX);
                             mobA.setWalking(velX < 0);
+                        }
                     } else {
                         // Arrêter le mouvement
-                        mob.setVelX(0);
-                        // mob.setVelY(0);
+                        mob.stopWalking();
                     }
                     
                     // 10% de chance de sauter

@@ -12,12 +12,11 @@ public class Mob extends Entity {
 
     private MobType type = MobType.PIG;
     private MobAction action;
-    private Point velocity = new Point(0, 0); // rapidite
  
-    private boolean isFalling, isJumping;
+    private boolean isFalling, isJumping, isWalkingLeft, isWalkingRight;
 
-    private int moveStartY;
-    private long lastTimeMove, lastTimeAction, moveStartTime;
+    private int moveStartY, walkStartX;
+    private long lastTimeMove, lastTimeAction, moveStartTime, walkStartTime;
 
     public static long DELAY_MOVE = 0; // 3ms - TODO: A supprimer ?
     public static long DELAY_ACTION = 50; // 50ms
@@ -26,6 +25,9 @@ public class Mob extends Entity {
     public static long JUMP_DELAY = 200; // 300ms
     public static long JUMP_HEIGHT = (int)(Entity.DEFAULT_BLOCK_SIZE * 1.7f); // Hauteur d'un saut
     public static float JUMP_FRICTION = 0.9f;
+
+    // Temps pour avancer d'un bloc
+    public static long WALK_DELAY = 100; // 300ms
 
     private Mob() {}
 
@@ -234,7 +236,8 @@ public class Mob extends Entity {
     }
 
     public boolean update(Map map) {
-        int x = getRealX() + getVelX(),
+
+        int x = getRealX(),
             y = getRealY();
 
         if(isFalling()) {
@@ -262,6 +265,16 @@ public class Mob extends Entity {
             }
 
             // System.out.println(elapsedTime+" "+deltaY+" "+getVelY());
+        }
+
+        if(isWalking()) {
+            long elapsedTime = System.currentTimeMillis() - walkStartTime;
+            int deltaX = getDistanceProgress(elapsedTime, Entity.DEFAULT_BLOCK_SIZE, WALK_DELAY);
+
+            if(isWalkingLeft())
+                deltaX *= -1;
+
+            x = walkStartX + deltaX;
         }
 
         boolean movedMobX = false, movedMobY = false;
@@ -319,22 +332,6 @@ public class Mob extends Entity {
         return false;
     }
 
-    // Old Method
-    public boolean moveWithVelocity(boolean restrictX, boolean restrictY) {
-        if(velocity.getX() == 0 && velocity.getY() == 0)
-            return false;
-        // TODO: Attention, ça peut poser des problèmes pour la friction d'un jump ?
-        // Peut etre qu'il vaut mieux mettre ça dans la fonction update !!!
-        if(System.currentTimeMillis() - lastTimeMove >= Mob.DELAY_MOVE) {
-            addToRealPosition(restrictX ? 0 : getVelX(),
-                          restrictY ? 0 : getVelY());
-
-            lastTimeMove = System.currentTimeMillis();
-            return true;
-        }
-        return false;
-    }
-
     public boolean refreshActionTexture() {
         if(System.currentTimeMillis() - lastTimeAction >= Mob.DELAY_ACTION) {
             action.nextTexture();
@@ -344,24 +341,50 @@ public class Mob extends Entity {
         return false;
     }
 
-    public void setVelocity(Point vel) {
-        this.velocity = new Point(vel);
+    public void setWalking(int walk) {
+        if(walk == 0)
+            stopWalking();
+        else {
+            if(walk > 0)
+                setWalkingRight(true);
+            else
+                setWalkingLeft(true);
+        }
     }
 
-    public void setVelX(int velX) {
-        this.velocity.setLocation(velX, getVelY());
+    public boolean isWalking() {
+        return isWalkingLeft || isWalkingRight;
     }
 
-    public void setVelY(int velY) {
-        this.velocity.setLocation(getVelX(), velY);
+    public void setWalkingRight(boolean isWalkingRight) {
+        this.isWalkingRight = isWalkingRight;
+        if(isWalkingRight) {
+            setWalkingLeft(false);
+            walkStartTime = System.currentTimeMillis();
+            walkStartX = getRealX();
+        }
     }
 
-    public int getVelX() {
-        return (int)velocity.getX();
+    public boolean isWalkingRight() {
+        return isWalkingRight;
     }
 
-    public int getVelY() {
-        return (int)velocity.getY();
+    public void setWalkingLeft(boolean isWalkingLeft) {
+        this.isWalkingLeft = isWalkingLeft;
+        if(isWalkingLeft) {
+            setWalkingRight(false);
+            walkStartTime = System.currentTimeMillis();
+            walkStartX = getRealX();
+        }
+    }
+
+    public void stopWalking() {
+        setWalkingLeft(false);
+        setWalkingRight(false);
+    }
+
+    public boolean isWalkingLeft() {
+        return isWalkingLeft;
     }
 
     public Mob weakClone() {
@@ -418,8 +441,6 @@ public class Mob extends Entity {
     }
 
     public void resetMobVelocity() {
-        setVelX(0);
-        setVelY(0);
         setJumping(false);
         setFalling(false);
     }

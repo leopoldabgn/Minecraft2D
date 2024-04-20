@@ -122,7 +122,7 @@ public class GameKeyListener extends KeyAdapter {
             case KeyEvent.VK_D:
             case KeyEvent.VK_RIGHT:
                 rightPressed = true;
-                p.setVelX(1);
+                p.setWalkingRight(true);
                 if(!pAction.isWalkingRight())
                     pAction.setWalking(false);
                 // else
@@ -131,7 +131,7 @@ public class GameKeyListener extends KeyAdapter {
             case KeyEvent.VK_A:
             case KeyEvent.VK_LEFT:
                 leftPressed = true;
-                p.setVelX(-1);
+                p.setWalkingLeft(true);
                 if(!pAction.isWalkingLeft())
                     pAction.setWalking(true);
                 // else
@@ -139,7 +139,7 @@ public class GameKeyListener extends KeyAdapter {
                 break;
             case KeyEvent.VK_SHIFT:
             case KeyEvent.VK_DOWN:
-                if(p.getVelX() == 0 && p.getVelY() == 0 && !pAction.isSneaking())
+                if(!p.isWalking() && !pAction.isSneaking())
                     pAction.setSneak();
                 break;
         }
@@ -178,13 +178,13 @@ public class GameKeyListener extends KeyAdapter {
         }
 
         if(rightPressed && !leftPressed) {
-            p.setVelX(1);
+            p.setWalkingRight(true);
         }
         else if(!rightPressed && leftPressed) {
-            p.setVelX(-1);
+            p.setWalkingLeft(true);
         }
         else if(!rightPressed && !leftPressed) {
-            p.setVelX(0);
+            p.stopWalking();
         }
     }
     
