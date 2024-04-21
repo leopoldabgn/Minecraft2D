@@ -113,7 +113,7 @@ public class GameKeyListener extends KeyAdapter {
             case KeyEvent.VK_SPACE:
                 if(map.isOnGround(p) && !p.isJumping()) {
                     pAction.setJumping(pAction.isWalkingLeft());
-                    map.startJumping(p);
+                    p.setJumping(true);
                 }
                 break;
             case KeyEvent.VK_Z:

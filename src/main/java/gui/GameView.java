@@ -67,7 +67,7 @@ public class GameView extends JPanel implements ActionListener {
                     if (random.nextDouble() < 0.1) {
                         if(map.isOnGround(mob) && !mob.isJumping()) {
                             mobA.setJumping(mobA.isWalkingLeft());
-                            map.startJumping(mob);
+                            mob.setJumping(true);
                         }
                     }
                 }

@@ -302,7 +302,16 @@ public class Mob extends Entity {
         }
 
         if(!isJumping() && !isFalling() && !map.isOnGround(this)) {
-            map.startFalling(this);
+            setFalling(true);
+        }
+
+        // On stoppe la marche si il y a un obstacle
+        if(isWalking() && !movedMobX && x != getRealX()) {
+            // Permet de reset le timer
+            if(isWalkingLeft())
+                setWalkingLeft(true);
+            else
+                setWalkingRight(true);
         }
 
         return movedMobX || movedMobY;
@@ -360,6 +369,7 @@ public class Mob extends Entity {
         this.isWalkingRight = isWalkingRight;
         if(isWalkingRight) {
             setWalkingLeft(false);
+            action.setWalking(false);
             walkStartTime = System.currentTimeMillis();
             walkStartX = getRealX();
         }
@@ -373,6 +383,7 @@ public class Mob extends Entity {
         this.isWalkingLeft = isWalkingLeft;
         if(isWalkingLeft) {
             setWalkingRight(false);
+            action.setWalking(true);
             walkStartTime = System.currentTimeMillis();
             walkStartX = getRealX();
         }

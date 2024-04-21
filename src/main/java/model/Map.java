@@ -275,41 +275,6 @@ public class Map implements Serializable {
         return true;
     }
 
-    // Set falling to true for the mob
-    public void startFalling(Mob m) {
-        if(m.isFalling())
-            return;
-        m.setFalling(true);
-        // new Thread(() -> {
-        //     m.setVelY(1);
-        //     while(!isOnGround(m))
-        //         ;
-        //     m.setVelY(0);
-        //     m.setFalling(false);
-        // }).start();
-    }
-
-    // TODO: Faire disparaitre cette fonction
-    // Set jumping to true
-    public void startJumping(Mob m) {
-        if(m.isJumping())
-            return;
-        m.setJumping(true);
-        // new Thread(() -> {
-        //     m.setVelY(-1);
-        //     for(int i=0;i<Entity.DEFAULT_BLOCK_SIZE * 2f;i++) {
-        //         try {
-        //             Thread.sleep(Mob.DELAY_MOVE);
-        //         } catch (InterruptedException e) {
-        //             e.printStackTrace();
-        //         }
-        //     }
-        //     m.setVelY(0);
-        //     m.setJumping(false);
-        //     m.getAction().setPreviousAction();
-        // }).start();
-    }
-
     public int getWidth() {
         return width;
     }

@@ -25,3 +25,6 @@ replay_pid*
 
 # target
 target/
+
+# autosave
+minecraft2d.save
