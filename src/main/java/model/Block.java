@@ -49,7 +49,7 @@ public class Block extends Entity {
 
     @Override
     public String toString() {
-        return "block -> type: "+getClass().getName()+", x: "+getRealX()+", y: "+getRealY();
+        return "block -> type: "+getType()+", x: "+getRealX()+", y: "+getRealY();
     }
 
 }

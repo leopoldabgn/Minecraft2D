@@ -47,4 +47,9 @@ public class CraftingTable {
 
     }
 
+    public Item getItemSlot(int x, int y) {
+        // TODO
+        return null;
+    }
+
 }
